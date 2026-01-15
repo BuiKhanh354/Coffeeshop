@@ -28,3 +28,6 @@ E:\CoffeeShop\src\CoffeeShop.Web\obj\Debug\net8.0\refint\CoffeeShop.Web.dll
 E:\CoffeeShop\src\CoffeeShop.Web\obj\Debug\net8.0\CoffeeShop.Web.pdb
 E:\CoffeeShop\src\CoffeeShop.Web\obj\Debug\net8.0\CoffeeShop.Web.genruntimeconfig.cache
 E:\CoffeeShop\src\CoffeeShop.Web\obj\Debug\net8.0\ref\CoffeeShop.Web.dll
+E:\CoffeeShop\src\CoffeeShop.Web\obj\Debug\net8.0\CoffeeShop.Web.sourcelink.json
+E:\CoffeeShop\src\CoffeeShop.Web\bin\Debug\net8.0\package-lock.json
+E:\CoffeeShop\src\CoffeeShop.Web\bin\Debug\net8.0\package.json
