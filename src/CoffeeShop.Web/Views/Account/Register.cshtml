@@ -1,0 +1,85 @@
+@model CoffeeShop.Web.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Đăng Ký";
+    Layout = "_AuthLayout";
+}
+
+<div class="w-full max-w-md">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-2xl border border-gray-100 dark:border-gray-700">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <span class="text-5xl mb-4 block">☕</span>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Đăng ký</h1>
+            <p class="text-gray-600 dark:text-gray-400">Tạo tài khoản để mua sắm</p>
+        </div>
+
+        <!-- Validation Summary -->
+        <div asp-validation-summary="ModelOnly" class="mb-4 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm"></div>
+
+        <form method="post" asp-action="Register">
+            <!-- Full Name -->
+            <div class="mb-4">
+                <label asp-for="FullName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Họ và tên</label>
+                <input asp-for="FullName" type="text" 
+                       class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                       placeholder="Nguyễn Văn A">
+                <span asp-validation-for="FullName" class="text-red-500 text-sm mt-1"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-4">
+                <label asp-for="Email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                <input asp-for="Email" type="email" 
+                       class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                       placeholder="email@example.com">
+                <span asp-validation-for="Email" class="text-red-500 text-sm mt-1"></span>
+            </div>
+
+            <!-- Phone -->
+            <div class="mb-4">
+                <label asp-for="Phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số điện thoại</label>
+                <input asp-for="Phone" type="tel" 
+                       class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                       placeholder="0123 456 789">
+                <span asp-validation-for="Phone" class="text-red-500 text-sm mt-1"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+                <label asp-for="Password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mật khẩu</label>
+                <input asp-for="Password" type="password" 
+                       class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                       placeholder="Tối thiểu 6 ký tự">
+                <span asp-validation-for="Password" class="text-red-500 text-sm mt-1"></span>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-6">
+                <label asp-for="ConfirmPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Xác nhận mật khẩu</label>
+                <input asp-for="ConfirmPassword" type="password" 
+                       class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                       placeholder="Nhập lại mật khẩu">
+                <span asp-validation-for="ConfirmPassword" class="text-red-500 text-sm mt-1"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" 
+                    class="w-full py-4 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold text-lg hover:from-amber-700 hover:to-orange-700 transform hover:-translate-y-1 transition-all duration-300 shadow-lg shadow-amber-500/25">
+                Đăng ký
+            </button>
+        </form>
+
+        <!-- Login Link -->
+        <p class="text-center mt-6 text-gray-600 dark:text-gray-400">
+            Đã có tài khoản? 
+            <a asp-action="Login" class="text-amber-600 dark:text-amber-400 font-semibold hover:underline">Đăng nhập</a>
+        </p>
+
+        <!-- Terms -->
+        <p class="text-center mt-4 text-xs text-gray-500 dark:text-gray-400">
+            Bằng cách đăng ký, bạn đồng ý với 
+            <a href="#" class="text-amber-600 dark:text-amber-400 hover:underline">Điều khoản dịch vụ</a> 
+            và <a href="#" class="text-amber-600 dark:text-amber-400 hover:underline">Chính sách bảo mật</a>
+        </p>
+    </div>
+</div>

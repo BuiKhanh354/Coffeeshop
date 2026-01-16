@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = "Truy cập bị từ chối";
+    Layout = "_AuthLayout";
+}
+
+<div class="w-full max-w-md text-center">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-2xl border border-gray-100 dark:border-gray-700">
+        <div class="w-24 h-24 mx-auto mb-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+            <svg class="w-12 h-12 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+        </div>
+
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Truy cập bị từ chối</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">
+            Bạn không có quyền truy cập trang này
+        </p>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="/" class="px-8 py-4 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold hover:from-amber-700 hover:to-orange-700 transition-all duration-300">
+                Về trang chủ
+            </a>
+            <a asp-action="Login" class="px-8 py-4 rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold hover:border-amber-600 hover:text-amber-600 transition-all duration-300">
+                Đăng nhập
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,157 @@
+@model CoffeeShop.Web.Models.CheckoutViewModel
+@{
+    ViewData["Title"] = "Thanh Toán";
+}
+
+<!-- Checkout Page -->
+<section class="pt-24 pb-16 min-h-screen bg-gradient-to-b from-amber-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div class="max-w-7xl mx-auto px-6">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <span class="inline-block px-4 py-2 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-sm font-semibold mb-4">
+                THANH TOÁN
+            </span>
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                Hoàn tất <span class="text-amber-600 dark:text-amber-400">đơn hàng</span>
+            </h1>
+        </div>
+
+        <form method="post" action="/Checkout/PlaceOrder">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Checkout Form -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Delivery Info -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-bold">1</span>
+                            Thông tin giao hàng
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Họ và tên *</label>
+                                <input type="text" name="FullName" required
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                                       placeholder="Nguyễn Văn A">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số điện thoại *</label>
+                                <input type="tel" name="Phone" required
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                                       placeholder="0123 456 789">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                                <input type="email" name="Email"
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                                       placeholder="email@example.com">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Địa chỉ giao hàng *</label>
+                                <textarea name="Address" rows="3" required
+                                          class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all resize-none"
+                                          placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"></textarea>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ghi chú</label>
+                                <textarea name="Note" rows="2"
+                                          class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all resize-none"
+                                          placeholder="Ghi chú cho đơn hàng (nếu có)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-bold">2</span>
+                            Phương thức thanh toán
+                        </h3>
+                        
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 cursor-pointer hover:border-amber-500 dark:hover:border-amber-400 transition-colors has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50 dark:has-[:checked]:bg-amber-900/20">
+                                <input type="radio" name="PaymentMethod" value="COD" checked class="w-5 h-5 text-amber-600 focus:ring-amber-500">
+                                <div class="flex-1">
+                                    <p class="font-semibold text-gray-900 dark:text-white">Thanh toán khi nhận hàng (COD)</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Thanh toán bằng tiền mặt khi nhận hàng</p>
+                                </div>
+                                <span class="text-2xl">💵</span>
+                            </label>
+
+                            <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 cursor-pointer hover:border-amber-500 dark:hover:border-amber-400 transition-colors has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50 dark:has-[:checked]:bg-amber-900/20">
+                                <input type="radio" name="PaymentMethod" value="BankTransfer" class="w-5 h-5 text-amber-600 focus:ring-amber-500">
+                                <div class="flex-1">
+                                    <p class="font-semibold text-gray-900 dark:text-white">Chuyển khoản ngân hàng</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Chuyển khoản trước khi giao hàng</p>
+                                </div>
+                                <span class="text-2xl">🏦</span>
+                            </label>
+
+                            <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 cursor-pointer hover:border-amber-500 dark:hover:border-amber-400 transition-colors has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50 dark:has-[:checked]:bg-amber-900/20">
+                                <input type="radio" name="PaymentMethod" value="QRCode" class="w-5 h-5 text-amber-600 focus:ring-amber-500">
+                                <div class="flex-1">
+                                    <p class="font-semibold text-gray-900 dark:text-white">Thanh toán QR Code</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">VNPay, MoMo, ZaloPay, VietQR</p>
+                                </div>
+                                <span class="text-2xl">📱</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 sticky top-24">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Đơn hàng của bạn</h3>
+                        
+                        <!-- Cart Items -->
+                        <div class="space-y-4 mb-6 max-h-64 overflow-y-auto">
+                            @foreach (var item in Model.CartItems)
+                            {
+                                <div class="flex gap-4">
+                                    <div class="w-16 h-16 flex-shrink-0 bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg flex items-center justify-center">
+                                        <span class="text-2xl">☕</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-gray-900 dark:text-white text-sm line-clamp-1">@item.ProductName</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">@item.Quantity</p>
+                                        <p class="text-amber-600 dark:text-amber-400 font-semibold">@item.TotalPrice.ToString("N0")đ</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <span>Tạm tính</span>
+                                <span>@Model.SubTotal.ToString("N0")đ</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                                <span>Phí vận chuyển</span>
+                                <span>@Model.ShippingFee.ToString("N0")đ</span>
+                            </div>
+                            <div class="pt-3 border-t border-gray-200 dark:border-gray-700">
+                                <div class="flex justify-between text-xl font-bold text-gray-900 dark:text-white">
+                                    <span>Tổng cộng</span>
+                                    <span class="text-amber-600 dark:text-amber-400">@Model.Total.ToString("N0")đ</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full mt-6 py-4 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold text-lg hover:from-amber-700 hover:to-orange-700 transition-all duration-300 shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Đặt hàng
+                        </button>
+
+                        <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
+                            Bằng cách đặt hàng, bạn đồng ý với 
+                            <a href="#" class="text-amber-600 dark:text-amber-400 hover:underline">điều khoản dịch vụ</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

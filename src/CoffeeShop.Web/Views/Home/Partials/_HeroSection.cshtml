@@ -1,0 +1,79 @@
+<!-- Hero Section - The Coffee House Style -->
+<section class="relative min-h-screen overflow-hidden">
+    <!-- Background with gradient overlay -->
+    <div class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900">
+        <div class="absolute inset-0 bg-[url('/images/hero-banner.png')] bg-cover bg-center bg-no-repeat opacity-90"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/70 to-transparent"></div>
+    </div>
+    
+    <!-- Decorative elements -->
+    <div class="absolute top-20 left-10 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-20 right-20 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 py-32 lg:py-40">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <!-- Left Content -->
+            <div class="text-white space-y-8">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/20 border border-amber-500/30 backdrop-blur-sm">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span class="text-amber-300 text-sm font-medium">Mới • Winter Collection 2025</span>
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-bold leading-tight">
+                    <span class="block text-white">Thưởng Thức</span>
+                    <span class="block bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 bg-clip-text text-transparent">Hương Vị</span>
+                    <span class="block text-white">Đích Thực</span>
+                </h1>
+                
+                <p class="text-xl text-gray-300 max-w-lg leading-relaxed">
+                    Khám phá bộ sưu tập cà phê và trà đặc biệt, được chọn lọc kỹ lưỡng từ những vùng trồng nổi tiếng Việt Nam.
+                </p>
+                
+                <div class="flex flex-wrap gap-4">
+                    <a href="/Products" 
+                       class="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-lg shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 transform hover:-translate-y-1 transition-all duration-300">
+                        <span>Đặt Ngay</span>
+                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
+                    <a href="#collection" 
+                       class="inline-flex items-center gap-3 px-8 py-4 rounded-full border-2 border-white/30 text-white font-bold text-lg backdrop-blur-sm hover:bg-white/10 transform hover:-translate-y-1 transition-all duration-300">
+                        <span>Xem Menu</span>
+                    </a>
+                </div>
+                
+                <!-- Stats -->
+                <div class="flex gap-8 pt-8 border-t border-white/10">
+                    <div>
+                        <p class="text-3xl font-bold text-amber-400">50+</p>
+                        <p class="text-gray-400 text-sm">Cửa hàng</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl font-bold text-amber-400">100K+</p>
+                        <p class="text-gray-400 text-sm">Khách hàng</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl font-bold text-amber-400">5★</p>
+                        <p class="text-gray-400 text-sm">Đánh giá</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right - Featured Products (visible on larger screens) -->
+            <div class="hidden lg:block">
+                <!-- Products are shown in the background image -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <a href="#collection" class="flex flex-col items-center gap-2 text-white/60 hover:text-amber-400 transition-colors">
+            <span class="text-sm">Khám phá</span>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+        </a>
+    </div>
+</section>

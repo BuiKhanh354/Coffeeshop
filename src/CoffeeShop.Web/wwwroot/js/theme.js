@@ -19,7 +19,7 @@ const toggleMobileMenu = () => {
 document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+
     if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
         document.documentElement.classList.add('dark');
     } else {
@@ -35,5 +35,23 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
         } else {
             document.documentElement.classList.remove('dark');
         }
+    }
+});
+
+// Toggle user menu dropdown
+const toggleUserMenu = () => {
+    const userMenu = document.getElementById('userMenu');
+    if (userMenu) {
+        userMenu.classList.toggle('hidden');
+    }
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', (e) => {
+    const userMenuContainer = document.getElementById('userMenuContainer');
+    const userMenu = document.getElementById('userMenu');
+
+    if (userMenuContainer && userMenu && !userMenuContainer.contains(e.target)) {
+        userMenu.classList.add('hidden');
     }
 });
