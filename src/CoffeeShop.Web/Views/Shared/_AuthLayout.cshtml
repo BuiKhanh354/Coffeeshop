@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Coffee Shop - Thưởng thức cà phê đích thực" />
+    <title>@ViewData["Title"] - Coffee Shop</title>
+    <link rel="icon" type="image/x-icon" href="~/logovaa.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {},
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="~/css/output.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <!-- Prevent flash of wrong theme -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</head>
+
+<body class="font-sans antialiased bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-900 dark:text-white min-h-screen transition-colors duration-300">
+    
+    <!-- Theme Toggle Button - Fixed Position -->
+    <button onclick="toggleTheme()" 
+            class="fixed top-6 right-6 z-50 w-12 h-12 rounded-xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg hover:shadow-xl flex items-center justify-center transition-all duration-300 group border border-gray-200 dark:border-gray-700"
+            aria-label="Toggle theme">
+        <!-- Sun Icon -->
+        <svg class="w-5 h-5 text-amber-500 absolute transition-all duration-300 opacity-0 dark:opacity-100 rotate-90 dark:rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+        <!-- Moon Icon -->
+        <svg class="w-5 h-5 text-gray-700 absolute transition-all duration-300 opacity-100 dark:opacity-0 rotate-0 dark:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        </svg>
+    </button>
+
+    <!-- Back to Home Button - Fixed Position -->
+    <a href="/" 
+       class="fixed top-6 left-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 group">
+        <svg class="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors hidden sm:inline">Trang chủ</span>
+    </a>
+
+    <!-- Main Content -->
+    <main class="min-h-screen flex items-center justify-center px-4 py-8">
+        @RenderBody()
+    </main>
+
+    <!-- Decorative Elements -->
+    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <!-- Floating coffee beans decoration -->
+        <div class="absolute top-20 left-10 text-6xl opacity-10 dark:opacity-5 animate-bounce" style="animation-delay: 0s; animation-duration: 3s;">☕</div>
+        <div class="absolute top-40 right-20 text-4xl opacity-10 dark:opacity-5 animate-bounce" style="animation-delay: 0.5s; animation-duration: 4s;">☕</div>
+        <div class="absolute bottom-20 left-1/4 text-5xl opacity-10 dark:opacity-5 animate-bounce" style="animation-delay: 1s; animation-duration: 3.5s;">☕</div>
+        <div class="absolute bottom-40 right-1/3 text-3xl opacity-10 dark:opacity-5 animate-bounce" style="animation-delay: 1.5s; animation-duration: 4.5s;">☕</div>
+    </div>
+
+    <script src="~/js/theme.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

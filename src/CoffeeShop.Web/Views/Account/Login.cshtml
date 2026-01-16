@@ -1,0 +1,76 @@
+@model CoffeeShop.Web.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Đăng Nhập";
+    Layout = "_AuthLayout";
+}
+
+<div class="w-full max-w-md">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-2xl border border-gray-100 dark:border-gray-700">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <span class="text-5xl mb-4 block">☕</span>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Đăng nhập</h1>
+            <p class="text-gray-600 dark:text-gray-400">Chào mừng bạn quay trở lại!</p>
+        </div>
+
+        <!-- Validation Summary -->
+        <div asp-validation-summary="ModelOnly" class="mb-4 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm"></div>
+
+        <form method="post" asp-action="Login">
+            <input type="hidden" asp-for="ReturnUrl" />
+            
+            <!-- Email -->
+            <div class="mb-5">
+                <label asp-for="Email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                <input asp-for="Email" type="email" 
+                       class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                       placeholder="email@example.com">
+                <span asp-validation-for="Email" class="text-red-500 text-sm mt-1"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-5">
+                <label asp-for="Password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mật khẩu</label>
+                <input asp-for="Password" type="password" 
+                       class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                       placeholder="••••••••">
+                <span asp-validation-for="Password" class="text-red-500 text-sm mt-1"></span>
+            </div>
+
+            <!-- Remember Me -->
+            <div class="flex items-center justify-between mb-6">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input asp-for="RememberMe" type="checkbox" class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500">
+                    <span class="text-sm text-gray-600 dark:text-gray-400">Ghi nhớ đăng nhập</span>
+                </label>
+                <a href="#" class="text-sm text-amber-600 dark:text-amber-400 hover:underline">Quên mật khẩu?</a>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" 
+                    class="w-full py-4 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold text-lg hover:from-amber-700 hover:to-orange-700 transform hover:-translate-y-1 transition-all duration-300 shadow-lg shadow-amber-500/25">
+                Đăng nhập
+            </button>
+        </form>
+
+        <!-- Register Link -->
+        <p class="text-center mt-6 text-gray-600 dark:text-gray-400">
+            Chưa có tài khoản? 
+            <a asp-action="Register" class="text-amber-600 dark:text-amber-400 font-semibold hover:underline">Đăng ký ngay</a>
+        </p>
+
+        <!-- Demo Accounts -->
+        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <p class="text-center text-sm text-gray-500 dark:text-gray-400 mb-3">Tài khoản demo:</p>
+            <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">
+                <code class="text-amber-600 dark:text-amber-400">user@coffeeshop.vn / User@123</code>
+            </div>
+        </div>
+
+        <!-- Admin Login Link -->
+        <p class="text-center mt-4 text-gray-500 dark:text-gray-400 text-sm">
+            Bạn là quản trị viên? 
+            <a asp-action="AdminLogin" class="text-gray-600 dark:text-gray-300 font-medium hover:text-amber-600 dark:hover:text-amber-400">Đăng nhập Admin</a>
+        </p>
+    </div>
+</div>

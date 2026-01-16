@@ -1,0 +1,229 @@
+@model CoffeeShop.Web.Models.Product
+@{
+    ViewData["Title"] = Model.Name;
+    var relatedProducts = ViewBag.RelatedProducts as List<CoffeeShop.Web.Models.Product>;
+}
+
+<!-- Product Details Page -->
+<section class="pt-24 pb-16 min-h-screen bg-gradient-to-b from-amber-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div class="max-w-7xl mx-auto px-6">
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm mb-8">
+            <a href="/" class="text-gray-500 dark:text-gray-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Trang chủ</a>
+            <span class="text-gray-400">/</span>
+            <a href="/Products" class="text-gray-500 dark:text-gray-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Sản phẩm</a>
+            <span class="text-gray-400">/</span>
+            <span class="text-amber-600 dark:text-amber-400 font-medium">@Model.Name</span>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Product Gallery -->
+            <div class="space-y-4">
+                <div class="aspect-square bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20 rounded-3xl flex items-center justify-center shadow-xl">
+                    <span class="text-9xl">☕</span>
+                </div>
+                <div class="grid grid-cols-4 gap-3">
+                    @for (int i = 0; i < 4; i++)
+                    {
+                        <div class="aspect-square bg-gradient-to-br from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-700 rounded-xl flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-amber-500 transition-all">
+                            <span class="text-3xl">☕</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div>
+                <span class="inline-block px-4 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-sm font-semibold mb-4">
+                    @Model.CategoryName
+                </span>
+                
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    @Model.Name
+                </h1>
+
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="flex items-center gap-1">
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            <span class="text-amber-400 text-xl">★</span>
+                        }
+                    </div>
+                    <span class="text-gray-500 dark:text-gray-400">(28 đánh giá)</span>
+                    <span class="text-green-600 dark:text-green-400 font-medium">
+                        @(Model.StockQuantity > 0 ? $"Còn {Model.StockQuantity} sản phẩm" : "Hết hàng")
+                    </span>
+                </div>
+
+                <div class="text-4xl font-bold text-amber-600 dark:text-amber-400 mb-6">
+                    @Model.Price.ToString("N0")đ
+                </div>
+
+                <p class="text-gray-600 dark:text-gray-400 text-lg mb-8 leading-relaxed">
+                    @Model.Description
+                </p>
+
+                <!-- Quantity Selector -->
+                <div class="flex items-center gap-4 mb-8">
+                    <span class="text-gray-700 dark:text-gray-300 font-medium">Số lượng:</span>
+                    <div class="flex items-center gap-0 bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden">
+                        <button onclick="decreaseQty()" class="w-12 h-12 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-xl font-bold text-gray-700 dark:text-gray-300">−</button>
+                        <input type="number" id="quantity" value="1" min="1" max="@Model.StockQuantity" 
+                               class="w-16 h-12 text-center bg-transparent border-0 text-gray-900 dark:text-white font-bold text-lg focus:ring-0">
+                        <button onclick="increaseQty()" class="w-12 h-12 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-xl font-bold text-gray-700 dark:text-gray-300">+</button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button onclick="addToCart(@Model.Id, '@Model.Name', '@Model.ImageUrl', @Model.Price)" 
+                            class="flex-1 flex items-center justify-center gap-3 py-4 px-8 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold text-lg hover:from-amber-700 hover:to-orange-700 transform hover:-translate-y-1 transition-all duration-300 shadow-lg shadow-amber-500/25">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        Thêm vào giỏ hàng
+                    </button>
+                    <button onclick="buyNow(@Model.Id, '@Model.Name', '@Model.ImageUrl', @Model.Price)" 
+                            class="flex-1 py-4 px-8 rounded-xl border-2 border-amber-600 dark:border-amber-500 text-amber-700 dark:text-amber-400 font-bold text-lg hover:bg-amber-600 hover:text-white dark:hover:bg-amber-500 dark:hover:text-gray-900 transform hover:-translate-y-1 transition-all duration-300">
+                        Mua ngay
+                    </button>
+                </div>
+
+                <!-- Product Features -->
+                <div class="mt-10 pt-8 border-t border-gray-200 dark:border-gray-700">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">100% nguyên chất</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Giao hàng nhanh</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Bảo hành chất lượng</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Giá tốt nhất</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        @if (relatedProducts != null && relatedProducts.Count > 0)
+        {
+            <div class="mt-20">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+                    Sản phẩm <span class="text-amber-600 dark:text-amber-400">liên quan</span>
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    @foreach (var product in relatedProducts)
+                    {
+                        <a href="/Products/Details/@product.Id" class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700">
+                            <div class="aspect-square bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20 flex items-center justify-center">
+                                <span class="text-5xl group-hover:scale-110 transition-transform duration-300">☕</span>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-bold text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-1 mb-2">
+                                    @product.Name
+                                </h3>
+                                <span class="text-lg font-bold text-amber-600 dark:text-amber-400">
+                                    @product.Price.ToString("N0")đ
+                                </span>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    const maxQty = @Model.StockQuantity;
+    
+    function decreaseQty() {
+        const input = document.getElementById('quantity');
+        if (parseInt(input.value) > 1) {
+            input.value = parseInt(input.value) - 1;
+        }
+    }
+
+    function increaseQty() {
+        const input = document.getElementById('quantity');
+        if (parseInt(input.value) < maxQty) {
+            input.value = parseInt(input.value) + 1;
+        }
+    }
+
+    function addToCart(productId, productName, imageUrl, unitPrice) {
+        const qty = document.getElementById('quantity').value;
+        fetch('/Cart/Add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `productId=${productId}&productName=${encodeURIComponent(productName)}&imageUrl=${encodeURIComponent(imageUrl)}&unitPrice=${unitPrice}&quantity=${qty}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Đã thêm vào giỏ hàng!');
+                updateCartCount(data.cartCount);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function buyNow(productId, productName, imageUrl, unitPrice) {
+        const qty = document.getElementById('quantity').value;
+        fetch('/Cart/Add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `productId=${productId}&productName=${encodeURIComponent(productName)}&imageUrl=${encodeURIComponent(imageUrl)}&unitPrice=${unitPrice}&quantity=${qty}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/Checkout';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-6 right-6 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    function updateCartCount(count) {
+        const cartBadge = document.getElementById('cartBadge');
+        if (cartBadge) {
+            cartBadge.textContent = count;
+            cartBadge.classList.remove('hidden');
+        }
+    }
+</script>
+}

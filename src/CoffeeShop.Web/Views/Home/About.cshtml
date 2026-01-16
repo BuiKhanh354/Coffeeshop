@@ -1,0 +1,432 @@
+@{
+    ViewData["Title"] = "Chuyện Nhà";
+}
+
+<!-- Hero Section - Chuyện Nhà Style -->
+<section class="relative min-h-[70vh] flex items-center justify-center overflow-hidden pt-20" style="background: linear-gradient(135deg, #FEF7ED 0%, #FFF8F0 50%, #FEF3E2 100%);">
+    <!-- Decorative Floating Elements -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <!-- Coffee Beans Floating -->
+        <div class="absolute top-20 left-10 text-4xl animate-bounce" style="animation-delay: 0.5s;">☕</div>
+        <div class="absolute top-40 right-20 text-3xl animate-bounce" style="animation-delay: 1s;">🫘</div>
+        <div class="absolute bottom-32 left-1/4 text-2xl animate-bounce" style="animation-delay: 1.5s;">🌿</div>
+        <div class="absolute top-1/3 right-1/4 text-3xl animate-bounce" style="animation-delay: 2s;">✨</div>
+        <!-- Decorative Circles -->
+        <div class="absolute -top-20 -right-20 w-64 h-64 bg-amber-200/40 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-32 -left-32 w-80 h-80 bg-orange-200/30 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+        <!-- Decorative Label -->
+        <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-amber-100 text-amber-700 text-sm font-semibold mb-8 shadow-sm">
+            <span class="text-lg">🏠</span>
+            <span>CHUYỆN NHÀ</span>
+        </div>
+        
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 text-gray-900 leading-tight">
+            Mỗi <span class="text-amber-600">tách cà phê</span><br>
+            là một <span class="text-orange-600">câu chuyện</span>
+        </h1>
+        
+        <p class="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed">
+            Từ những đồi cà phê xanh ngát đến tách cà phê thơm nồng trên tay bạn, 
+            chúng tôi gửi gắm tâm huyết trong từng giọt hương vị
+        </p>
+
+        <!-- Scroll Indicator -->
+        <div class="animate-bounce mt-8">
+            <svg class="w-8 h-8 mx-auto text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+        </div>
+    </div>
+</section>
+
+<!-- Story Section 1 - Hạt Cà Phê Nguyên Bản (Image Left, Text Right) -->
+<section class="py-24 bg-white dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <!-- Image with Scrapbook Effect -->
+            <div class="relative">
+                <div class="relative transform rotate-[-2deg] hover:rotate-0 transition-transform duration-500">
+                    <!-- Main Image Card -->
+                    <div class="aspect-[4/5] rounded-3xl bg-gradient-to-br from-amber-100 to-orange-200 dark:from-amber-900/50 dark:to-orange-900/50 shadow-2xl overflow-hidden border-8 border-white dark:border-gray-800">
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-200 to-orange-300">
+                            <span class="text-[180px] opacity-90">☕</span>
+                        </div>
+                    </div>
+                    <!-- Decorative Sticker -->
+                    <div class="absolute -top-6 -right-6 bg-amber-400 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg transform rotate-12">
+                        100% Nguyên Chất
+                    </div>
+                    <!-- Coffee Bean Decoration -->
+                    <div class="absolute -bottom-4 -left-4 text-5xl transform -rotate-12">🫘</div>
+                </div>
+            </div>
+
+            <!-- Text Content -->
+            <div class="lg:pl-8">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-sm font-semibold mb-6">
+                    <span>☕</span> HẠT CÀ PHÊ
+                </div>
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+                    Hạt Cà Phê <span class="text-amber-600 dark:text-amber-400">Nguyên Bản</span>
+                </h2>
+                <div class="space-y-5 text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
+                    <p>
+                        <strong class="text-gray-900 dark:text-white">Từ những vùng đất cao nguyên màu mỡ</strong>, 
+                        chúng tôi lựa chọn những hạt cà phê chín đỏ nhất, được hái bằng tay với sự tỉ mỉ của người nông dân.
+                    </p>
+                    <p>
+                        Mỗi hạt cà phê trải qua quy trình chế biến nghiêm ngặt, rang xay tại xưởng của chúng tôi 
+                        để giữ trọn <em class="text-amber-600 dark:text-amber-400 font-medium">hương vị đậm đà, mượt mà</em>.
+                    </p>
+                    <p>
+                        Chúng tôi tin rằng cà phê ngon nhất là cà phê được làm với tình yêu và sự tôn trọng 
+                        thiên nhiên.
+                    </p>
+                </div>
+                <!-- Quote -->
+                <blockquote class="mt-8 p-6 bg-amber-50 dark:bg-amber-900/20 rounded-2xl border-l-4 border-amber-500">
+                    <p class="text-gray-700 dark:text-gray-300 italic text-lg">
+                        "Hạt cà phê tốt không chỉ ở hương vị, mà còn ở câu chuyện phía sau nó."
+                    </p>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Story Section 2 - Đồi Trà Tuyển Chọn (Text Left, Image Right) -->
+<section class="py-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <!-- Text Content -->
+            <div class="lg:pr-8 order-2 lg:order-1">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm font-semibold mb-6">
+                    <span>🍵</span> ĐỒI TRÀ
+                </div>
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+                    Đồi Trà <span class="text-green-600 dark:text-green-400">Tuyển Chọn</span>
+                </h2>
+                <div class="space-y-5 text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
+                    <p>
+                        <strong class="text-gray-900 dark:text-white">Búp trà non từ những đồi trà bạt ngàn</strong>, 
+                        được hái vào sáng sớm khi sương còn đọng trên lá, giữ trọn tinh túy của thiên nhiên.
+                    </p>
+                    <p>
+                        Chúng tôi hợp tác với những nông trại trà lâu đời, nơi <em class="text-green-600 dark:text-green-400 font-medium">
+                        kỹ thuật canh tác truyền thống</em> được gìn giữ qua nhiều thế hệ.
+                    </p>
+                    <p>
+                        Từ Ô Long, Trà Xanh đến Hồng Trà - mỗi loại trà đều mang một hương vị 
+                        đặc trưng riêng, chờ đợi bạn khám phá.
+                    </p>
+                </div>
+                <!-- Quote -->
+                <blockquote class="mt-8 p-6 bg-green-50 dark:bg-green-900/20 rounded-2xl border-l-4 border-green-500">
+                    <p class="text-gray-700 dark:text-gray-300 italic text-lg">
+                        "Một tách trà ngon là khoảnh khắc yên bình giữa cuộc sống hối hả."
+                    </p>
+                </blockquote>
+            </div>
+
+            <!-- Image with Scrapbook Effect -->
+            <div class="relative order-1 lg:order-2">
+                <div class="relative transform rotate-[2deg] hover:rotate-0 transition-transform duration-500">
+                    <!-- Main Image Card -->
+                    <div class="aspect-[4/5] rounded-3xl bg-gradient-to-br from-green-100 to-emerald-200 dark:from-green-900/50 dark:to-emerald-900/50 shadow-2xl overflow-hidden border-8 border-white dark:border-gray-800">
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-200 to-emerald-300">
+                            <span class="text-[180px] opacity-90">🍵</span>
+                        </div>
+                    </div>
+                    <!-- Decorative Sticker -->
+                    <div class="absolute -top-6 -left-6 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg transform -rotate-12">
+                        Tự Nhiên 100%
+                    </div>
+                    <!-- Leaf Decoration -->
+                    <div class="absolute -bottom-4 -right-4 text-5xl transform rotate-12">🌿</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values Section -->
+<section class="py-24 bg-white dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-sm font-semibold mb-6">
+                <span>💝</span> GIÁ TRỊ CỐT LÕI
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                Những Điều <span class="text-amber-600 dark:text-amber-400">Chúng Tôi</span> Tin
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
+                Không chỉ là cà phê, đó là triết lý và cam kết của chúng tôi
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Value 1 -->
+            <div class="group p-8 rounded-3xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-800 border border-amber-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-center">
+                <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <span class="text-4xl">🌟</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Chất Lượng</h3>
+                <p class="text-gray-600 dark:text-gray-400">
+                    Nguyên liệu tuyển chọn, quy trình chuẩn mực quốc tế
+                </p>
+            </div>
+
+            <!-- Value 2 -->
+            <div class="group p-8 rounded-3xl bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-800 border border-green-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-center">
+                <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <span class="text-4xl">💚</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Bền Vững</h3>
+                <p class="text-gray-600 dark:text-gray-400">
+                    Đồng hành cùng nông dân, bảo vệ môi trường xanh
+                </p>
+            </div>
+
+            <!-- Value 3 -->
+            <div class="group p-8 rounded-3xl bg-gradient-to-br from-pink-50 to-rose-50 dark:from-gray-800 dark:to-gray-800 border border-pink-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-center">
+                <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <span class="text-4xl">❤️</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Tận Tâm</h3>
+                <p class="text-gray-600 dark:text-gray-400">
+                    Phục vụ từ trái tim, mang nụ cười đến khách hàng
+                </p>
+            </div>
+
+            <!-- Value 4 -->
+            <div class="group p-8 rounded-3xl bg-gradient-to-br from-purple-50 to-violet-50 dark:from-gray-800 dark:to-gray-800 border border-purple-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-center">
+                <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-400 to-violet-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <span class="text-4xl">🎨</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Sáng Tạo</h3>
+                <p class="text-gray-600 dark:text-gray-400">
+                    Không ngừng đổi mới, tạo trải nghiệm độc đáo
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-20 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
+            <div class="p-6 group">
+                <div class="text-5xl md:text-6xl font-bold mb-2 group-hover:scale-110 transition-transform">5+</div>
+                <div class="text-amber-100 text-lg">Năm kinh nghiệm</div>
+            </div>
+            <div class="p-6 group">
+                <div class="text-5xl md:text-6xl font-bold mb-2 group-hover:scale-110 transition-transform">50K+</div>
+                <div class="text-amber-100 text-lg">Khách hàng tin tưởng</div>
+            </div>
+            <div class="p-6 group">
+                <div class="text-5xl md:text-6xl font-bold mb-2 group-hover:scale-110 transition-transform">100+</div>
+                <div class="text-amber-100 text-lg">Món đồ uống</div>
+            </div>
+            <div class="p-6 group">
+                <div class="text-5xl md:text-6xl font-bold mb-2 group-hover:scale-110 transition-transform">4.9</div>
+                <div class="text-amber-100 text-lg">Đánh giá trung bình</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section - "Những Lời Thương" -->
+<section class="py-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400 text-sm font-semibold mb-6">
+                <span>💬</span> NHỮNG LỜI THƯƠNG
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                Khách Hàng <span class="text-pink-600 dark:text-pink-400">Nói Gì</span> Về Chúng Tôi
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
+                Những đánh giá chân thực từ những người đã đồng hành cùng Coffee Shop
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Testimonial 1 - Pink -->
+            <div class="p-8 rounded-3xl bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-800/20 border border-pink-200 dark:border-pink-800/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="flex items-center gap-1 mb-4">
+                    <span class="text-amber-400 text-xl">★</span>
+                    <span class="text-amber-400 text-xl">★</span>
+                    <span class="text-amber-400 text-xl">★</span>
+                    <span class="text-amber-400 text-xl">★</span>
+                    <span class="text-amber-400 text-xl">★</span>
+                </div>
+                <p class="text-gray-700 dark:text-gray-300 mb-6 text-lg italic leading-relaxed">
+                    "Cà phê ở đây thực sự tuyệt vời! Không gian cũng rất đẹp và yên tĩnh, thích hợp để làm việc và thư giãn."
+                </p>
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                        M
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-900 dark:text-white text-lg">Minh Anh</p>
+                        <p class="text-sm text-pink-600 dark:text-pink-400">Freelance Designer</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 2 - Blue -->
+            <div class="p-8 rounded-3xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border border-blue-200 dark:border-blue-800/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="flex items-center gap-1 mb-4">
+                    <span class="text-amber-400 text-xl">★</span>
+                    <span class="text-amber-400 text-xl">★</span>
+                    <span class="text-amber-400 text-xl">★</span>
+                    <span class="text-amber-400 text-xl">★</span>
+                    <span class="text-amber-400 text-xl">★</span>
+                </div>
+                <p class="text-gray-700 dark:text-gray-300 mb-6 text-lg italic leading-relaxed">
+                    "Nhân viên rất thân thiện, cà phê ngon và giá cả hợp lý. Đây là địa điểm yêu thích của tôi mỗi sáng!"
+                </p>
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                        T
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-900 dark:text-white text-lg">Thanh Hùng</p>
+                        <p class="text-sm text-blue-600 dark:text-blue-400">Software Engineer</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 3 - Yellow -->
+            <div class="p-8 rounded-3xl bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-yellow-900/20 dark:to-amber-800/20 border border-yellow-200 dark:border-yellow-800/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="flex items-center gap-1 mb-4">
+                    <span class="text-amber-400 text-xl">★</span>
+                    <span class="text-amber-400 text-xl">★</span>
+                    <span class="text-amber-400 text-xl">★</span>
+                    <span class="text-amber-400 text-xl">★</span>
+                    <span class="text-amber-400 text-xl">★</span>
+                </div>
+                <p class="text-gray-700 dark:text-gray-300 mb-6 text-lg italic leading-relaxed">
+                    "Latte art ở đây đẹp mắt và vị cà phê rất đậm đà. Trà Ô Long cũng ngon không kém! Highly recommend!"
+                </p>
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                        L
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-900 dark:text-white text-lg">Linh Chi</p>
+                        <p class="text-sm text-yellow-600 dark:text-yellow-400">Marketing Manager</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="py-24 bg-white dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-sm font-semibold mb-6">
+                <span>👥</span> ĐỘI NGŨ
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                Những Người Tạo Nên <span class="text-amber-600 dark:text-amber-400">Hương Vị</span>
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
+                Đội ngũ barista tài năng và tận tâm của Coffee Shop
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Team Member 1 -->
+            <div class="group text-center">
+                <div class="relative mb-8 mx-auto">
+                    <div class="w-56 h-56 mx-auto rounded-full bg-gradient-to-br from-amber-200 to-orange-300 dark:from-amber-900 dark:to-orange-900 flex items-center justify-center overflow-hidden shadow-xl group-hover:shadow-2xl transition-all transform group-hover:scale-105 border-4 border-white dark:border-gray-800">
+                        <span class="text-8xl">👨‍🍳</span>
+                    </div>
+                    <!-- Badge -->
+                    <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-amber-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg">
+                        FOUNDER
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">Nguyễn Văn A</h3>
+                <p class="text-amber-600 dark:text-amber-400 font-semibold mb-3">Head Barista</p>
+                <p class="text-gray-600 dark:text-gray-400 max-w-xs mx-auto">
+                    10 năm kinh nghiệm pha chế, đam mê tìm kiếm hương vị hoàn hảo
+                </p>
+            </div>
+
+            <!-- Team Member 2 -->
+            <div class="group text-center">
+                <div class="relative mb-8 mx-auto">
+                    <div class="w-56 h-56 mx-auto rounded-full bg-gradient-to-br from-orange-200 to-yellow-300 dark:from-orange-900 dark:to-yellow-900 flex items-center justify-center overflow-hidden shadow-xl group-hover:shadow-2xl transition-all transform group-hover:scale-105 border-4 border-white dark:border-gray-800">
+                        <span class="text-8xl">👩‍🍳</span>
+                    </div>
+                    <!-- Badge -->
+                    <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg">
+                        CCO
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">Trần Thị B</h3>
+                <p class="text-orange-600 dark:text-orange-400 font-semibold mb-3">Chief Coffee Officer</p>
+                <p class="text-gray-600 dark:text-gray-400 max-w-xs mx-auto">
+                    Chuyên gia thử nếm, đảm bảo chất lượng từng mẻ cà phê
+                </p>
+            </div>
+
+            <!-- Team Member 3 -->
+            <div class="group text-center">
+                <div class="relative mb-8 mx-auto">
+                    <div class="w-56 h-56 mx-auto rounded-full bg-gradient-to-br from-yellow-200 to-amber-300 dark:from-yellow-900 dark:to-amber-900 flex items-center justify-center overflow-hidden shadow-xl group-hover:shadow-2xl transition-all transform group-hover:scale-105 border-4 border-white dark:border-gray-800">
+                        <span class="text-8xl">🧑‍💼</span>
+                    </div>
+                    <!-- Badge -->
+                    <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg">
+                        MANAGER
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">Lê Văn C</h3>
+                <p class="text-yellow-600 dark:text-yellow-400 font-semibold mb-3">Operations Manager</p>
+                <p class="text-gray-600 dark:text-gray-400 max-w-xs mx-auto">
+                    Đảm bảo mọi hoạt động vận hành trơn tru và hiệu quả
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-24" style="background: linear-gradient(135deg, #FEF7ED 0%, #FFF8F0 50%, #FEF3E2 100%);">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+        <!-- Decorative -->
+        <div class="text-6xl mb-6">☕</div>
+        
+        <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
+            Sẵn Sàng <span class="text-amber-600">Khám Phá</span>?
+        </h2>
+        <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+            Ghé thăm chúng tôi để trải nghiệm hương vị cà phê đích thực, 
+            hoặc đặt hàng online ngay hôm nay!
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="/Products" 
+               class="group px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold text-lg shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 transform hover:-translate-y-1 transition-all duration-300">
+                <span class="flex items-center justify-center gap-2">
+                    <span>Khám Phá Menu</span>
+                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                </span>
+            </a>
+            <a href="/Home/Contact" 
+               class="px-8 py-4 rounded-2xl border-2 border-amber-600 text-amber-700 font-bold text-lg hover:bg-amber-600 hover:text-white transform hover:-translate-y-1 transition-all duration-300">
+                Liên Hệ Ngay
+            </a>
+        </div>
+    </div>
+</section>

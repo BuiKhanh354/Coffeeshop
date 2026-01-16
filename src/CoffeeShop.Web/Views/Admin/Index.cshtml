@@ -1,0 +1,137 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<div class="space-y-8">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Xin chào, @User.Identity?.Name!</p>
+        </div>
+        <div class="flex gap-3">
+            <button class="px-4 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                Xuất báo cáo
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Total Revenue -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <span class="text-green-600 dark:text-green-400 text-sm font-semibold flex items-center gap-1">
+                    +12%
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                    </svg>
+                </span>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@(((decimal)ViewBag.TodayRevenue).ToString("N0"))đ</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Doanh thu hôm nay</p>
+        </div>
+
+        <!-- Total Orders -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                    </svg>
+                </div>
+                <span class="text-blue-600 dark:text-blue-400 text-sm font-semibold flex items-center gap-1">
+                    +8%
+                </span>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@ViewBag.TotalOrders</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Tổng đơn hàng</p>
+        </div>
+
+        <!-- Total Products -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@ViewBag.TotalProducts</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Sản phẩm</p>
+        </div>
+
+        <!-- Total Customers -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@ViewBag.TotalCustomers</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Khách hàng</p>
+        </div>
+    </div>
+
+    <!-- Orders Status -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Pending Orders -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Trạng thái đơn hàng</h3>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-yellow-200 dark:bg-yellow-900 flex items-center justify-center">
+                            <span class="text-lg">⏳</span>
+                        </div>
+                        <span class="font-medium text-gray-900 dark:text-white">Chờ xử lý</span>
+                    </div>
+                    <span class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">@ViewBag.PendingOrders</span>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-blue-200 dark:bg-blue-900 flex items-center justify-center">
+                            <span class="text-lg">📦</span>
+                        </div>
+                        <span class="font-medium text-gray-900 dark:text-white">Đang xử lý</span>
+                    </div>
+                    <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">@ViewBag.ProcessingOrders</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Thao tác nhanh</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <a href="/Admin/Products" class="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors group">
+                    <span class="text-2xl block mb-2">📦</span>
+                    <span class="font-medium text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400">Quản lý sản phẩm</span>
+                </a>
+                <a href="/Admin/Orders" class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors group">
+                    <span class="text-2xl block mb-2">🛒</span>
+                    <span class="font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">Quản lý đơn hàng</span>
+                </a>
+                <a href="/Admin/Customers" class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors group">
+                    <span class="text-2xl block mb-2">👥</span>
+                    <span class="font-medium text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400">Khách hàng</span>
+                </a>
+                <a href="/Admin/Reports" class="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors group">
+                    <span class="text-2xl block mb-2">📊</span>
+                    <span class="font-medium text-gray-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400">Báo cáo</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

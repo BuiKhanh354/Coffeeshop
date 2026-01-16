@@ -1,0 +1,42 @@
+<script>
+    // Category tabs functionality
+    document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active state from all tabs
+            document.querySelectorAll('.category-tab').forEach(t => {
+                t.classList.remove('active', 'bg-amber-600', 'text-white', 'shadow-lg', 'shadow-amber-500/25');
+                t.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300', 'border', 'border-gray-200', 'dark:border-gray-700');
+            });
+            
+            // Add active state to clicked tab
+            this.classList.add('active', 'bg-amber-600', 'text-white', 'shadow-lg', 'shadow-amber-500/25');
+            this.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300', 'border', 'border-gray-200', 'dark:border-gray-700');
+            
+            // Filter products (simple show/hide for demo)
+            const category = this.dataset.category;
+            document.querySelectorAll('[data-category]').forEach(product => {
+                if (product.classList.contains('category-tab')) return;
+                
+                if (category === 'all' || product.dataset.category === category) {
+                    product.style.display = 'block';
+                    product.style.animation = 'fadeIn 0.3s ease-out';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
