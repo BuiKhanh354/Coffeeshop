@@ -1,0 +1,224 @@
+@{
+    ViewData["Title"] = "Quản lý Sản phẩm";
+    Layout = "_AdminLayout";
+}
+
+@* Demo Products Data *@
+@{
+    var products = new[] {
+        new { Id = 1, Name = "Espresso Arabica", Category = "Cà phê hạt", Price = 185000, Stock = 50, Image = "/images/cafe1.jpg" },
+        new { Id = 2, Name = "Robusta Đặc Biệt", Category = "Cà phê hạt", Price = 165000, Stock = 35, Image = "/images/cafe2.jpg" },
+        new { Id = 3, Name = "Cà Phê Phin Truyền Thống", Category = "Cà phê bột", Price = 95000, Stock = 100, Image = "/images/cafe3.jpg" },
+        new { Id = 4, Name = "Cà Phê Sữa Đá", Category = "Cà phê bột", Price = 85000, Stock = 80, Image = "/images/cafe4.jpg" },
+        new { Id = 5, Name = "Cà Phê Hòa Tan 3in1", Category = "Cà phê hòa tan", Price = 125000, Stock = 150, Image = "/images/cafe5.jpg" },
+        new { Id = 6, Name = "Cold Brew Concentrate", Category = "Cà phê hạt", Price = 220000, Stock = 25, Image = "/images/cafe6.jpg" },
+        new { Id = 7, Name = "Phin Inox Cao Cấp", Category = "Dụng cụ pha chế", Price = 75000, Stock = 60, Image = "/images/phin.jpg" },
+        new { Id = 8, Name = "Bình French Press", Category = "Dụng cụ pha chế", Price = 285000, Stock = 20, Image = "/images/french-press.jpg" }
+    };
+}
+
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Quản lý Sản phẩm</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Quản lý danh sách sản phẩm của cửa hàng</p>
+        </div>
+        <button onclick="openAddModal()" class="px-5 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium transition-colors flex items-center gap-2 shadow-lg shadow-amber-600/30">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Thêm sản phẩm
+        </button>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-gray-100 dark:border-gray-700">
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex-1 relative">
+                <input type="text" placeholder="Tìm kiếm sản phẩm..." 
+                       class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </div>
+            <select class="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                <option value="">Tất cả danh mục</option>
+                <option value="1">Cà phê hạt</option>
+                <option value="2">Cà phê bột</option>
+                <option value="3">Cà phê hòa tan</option>
+                <option value="4">Dụng cụ pha chế</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 dark:bg-gray-700/50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Sản phẩm</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Danh mục</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Giá</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Tồn kho</th>
+                        <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                    @foreach (var product in products)
+                    {
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-2xl">☕</div>
+                                <div>
+                                    <p class="font-semibold text-gray-900 dark:text-white">@product.Name</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">ID: #@product.Id</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
+                                @product.Category
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="font-semibold text-gray-900 dark:text-white">@(product.Price.ToString("N0"))đ</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            @if (product.Stock > 50)
+                            {
+                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                                    @product.Stock còn
+                                </span>
+                            }
+                            else if (product.Stock > 20)
+                            {
+                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400">
+                                    @product.Stock còn
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400">
+                                    @product.Stock còn
+                                </span>
+                            }
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center justify-end gap-2">
+                                <button onclick="openEditModal(@product.Id)" class="p-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 transition-colors" title="Sửa">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                </button>
+                                <button onclick="confirmDelete(@product.Id)" class="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors" title="Xóa">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Hiển thị 1-8 của 48 sản phẩm</p>
+            <div class="flex items-center gap-2">
+                <button class="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50" disabled>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <button class="px-4 py-2 rounded-lg bg-amber-600 text-white font-medium">1</button>
+                <button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">2</button>
+                <button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">3</button>
+                <button class="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Product Modal -->
+<div id="productModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-lg mx-4 shadow-2xl">
+        <div class="p-6 border-b border-gray-100 dark:border-gray-700">
+            <h3 id="modalTitle" class="text-xl font-bold text-gray-900 dark:text-white">Thêm sản phẩm mới</h3>
+        </div>
+        <form class="p-6 space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tên sản phẩm</label>
+                <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Danh mục</label>
+                    <select class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                        <option>Cà phê hạt</option>
+                        <option>Cà phê bột</option>
+                        <option>Cà phê hòa tan</option>
+                        <option>Dụng cụ pha chế</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Giá (VNĐ)</label>
+                    <input type="number" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số lượng tồn kho</label>
+                <input type="number" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mô tả</label>
+                <textarea rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 resize-none"></textarea>
+            </div>
+        </form>
+        <div class="p-6 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
+            <button onclick="closeModal()" class="px-5 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                Hủy
+            </button>
+            <button class="px-5 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium transition-colors">
+                Lưu sản phẩm
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Thêm sản phẩm mới';
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+        
+        function openEditModal(id) {
+            document.getElementById('modalTitle').textContent = 'Chỉnh sửa sản phẩm #' + id;
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+        
+        function closeModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+        
+        function confirmDelete(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa sản phẩm #' + id + '?')) {
+                alert('Đã xóa sản phẩm (Demo)');
+            }
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('productModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+}

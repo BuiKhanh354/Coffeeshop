@@ -229,6 +229,36 @@ namespace CoffeeShop.Web.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult Profile()
+        {
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return RedirectToAction("Login");
+            }
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Orders()
+        {
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return RedirectToAction("Login");
+            }
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return RedirectToAction("Login");
+            }
+            return View();
+        }
+
         // Simple password hashing (demo - use BCrypt or similar in production)
         private static string HashPassword(string password)
         {
