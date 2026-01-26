@@ -1,13 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "sAtMvIxQyxY=",
+  "dgSpecHash": "LEoPhWn+R5M=",
   "success": true,
-  "projectFilePath": "D:\\githubclone\\Coffeeshop\\src\\CoffeeShop.Web\\CoffeeShop.Web.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\khanh\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.21\\microsoft.netcore.app.ref.8.0.21.nupkg.sha512",
-    "C:\\Users\\khanh\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.21\\microsoft.windowsdesktop.app.ref.8.0.21.nupkg.sha512",
-    "C:\\Users\\khanh\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.21\\microsoft.aspnetcore.app.ref.8.0.21.nupkg.sha512",
-    "C:\\Users\\khanh\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.21\\microsoft.netcore.app.host.win-x64.8.0.21.nupkg.sha512"
-  ],
+  "projectFilePath": "E:\\CoffeeShop\\src\\CoffeeShop.Web\\CoffeeShop.Web.csproj",
+  "expectedPackageFiles": [],
   "logs": []
 }

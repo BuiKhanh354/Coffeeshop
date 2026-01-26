@@ -273,10 +273,197 @@
         </div>
     </footer>
 
+    <!-- AI Chat Widget -->
+    <div id="aiChatWidget" class="fixed bottom-6 right-6 z-50">
+        <!-- Chat Button -->
+        <button id="chatToggleBtn" onclick="toggleChatWidget()" 
+                class="relative w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full shadow-2xl shadow-amber-500/40 flex items-center justify-center hover:from-amber-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-110 group">
+            <!-- Pulse Animation -->
+            <span class="absolute inset-0 rounded-full bg-amber-500 animate-ping opacity-30"></span>
+            <!-- Chat Icon -->
+            <svg id="chatIcon" class="w-7 h-7 text-white transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            </svg>
+            <!-- Close Icon (hidden by default) -->
+            <svg id="closeIcon" class="w-7 h-7 text-white hidden transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            <!-- Notification Badge -->
+            <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-bounce">
+                1
+            </span>
+        </button>
+
+        <!-- Chat Window -->
+        <div id="chatWindow" class="hidden absolute bottom-20 right-0 w-80 sm:w-96 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transform transition-all duration-300 origin-bottom-right">
+            <!-- Chat Header -->
+            <div class="bg-gradient-to-r from-amber-500 to-orange-600 p-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                    <span class="text-xl">🤖</span>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-white font-bold">Hỗ Trợ AI</h3>
+                    <p class="text-white/80 text-xs flex items-center gap-1">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        Đang hoạt động
+                    </p>
+                </div>
+                <button onclick="toggleChatWidget()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Chat Messages -->
+            <div id="chatMessages" class="h-72 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
+                <!-- Welcome Message -->
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span class="text-sm">🤖</span>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl rounded-tl-none p-3 shadow-sm max-w-[80%]">
+                        <p class="text-gray-700 dark:text-gray-300 text-sm">
+                            Xin chào! 👋 Tôi là trợ lý AI của Coffee Shop. Tôi có thể giúp bạn:
+                        </p>
+                        <ul class="mt-2 text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                            <li>☕ Tư vấn sản phẩm</li>
+                            <li>📦 Theo dõi đơn hàng</li>
+                            <li>❓ Giải đáp thắc mắc</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Replies -->
+            <div class="px-4 py-2 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
+                <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    <button onclick="sendQuickReply('Menu hôm nay')" class="flex-shrink-0 px-3 py-1.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-full text-xs font-medium hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors">
+                        📋 Menu hôm nay
+                    </button>
+                    <button onclick="sendQuickReply('Khuyến mãi')" class="flex-shrink-0 px-3 py-1.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-full text-xs font-medium hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors">
+                        🎉 Khuyến mãi
+                    </button>
+                    <button onclick="sendQuickReply('Đặt bàn')" class="flex-shrink-0 px-3 py-1.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-full text-xs font-medium hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors">
+                        🪑 Đặt bàn
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
+                <form id="chatForm" onsubmit="sendMessage(event)" class="flex gap-2">
+                    <input type="text" id="chatInput" 
+                           class="flex-1 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all text-sm"
+                           placeholder="Nhập tin nhắn...">
+                    <button type="submit" 
+                            class="w-12 h-12 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl flex items-center justify-center hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/theme.js"></script>
     <script src="~/js/search.js"></script>
+
+    <!-- AI Chat Widget Script -->
+    <script>
+        function toggleChatWidget() {
+            const chatWindow = document.getElementById('chatWindow');
+            const chatIcon = document.getElementById('chatIcon');
+            const closeIcon = document.getElementById('closeIcon');
+            const badge = document.querySelector('#chatToggleBtn span:last-child');
+            
+            chatWindow.classList.toggle('hidden');
+            chatIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+            
+            // Hide badge when opened
+            if (!chatWindow.classList.contains('hidden')) {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function sendMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addUserMessage(message);
+            input.value = '';
+            
+            // Simulate AI response (replace with actual AI integration)
+            setTimeout(() => {
+                addBotMessage('Cảm ơn bạn đã liên hệ! Đây là phản hồi tự động. Để tích hợp AI thực sự, bạn có thể kết nối với API của ChatGPT, Gemini hoặc các dịch vụ AI khác.');
+            }, 1000);
+        }
+
+        function sendQuickReply(text) {
+            addUserMessage(text);
+            
+            // Simulate AI response based on quick reply
+            setTimeout(() => {
+                let response = '';
+                switch(text) {
+                    case 'Menu hôm nay':
+                        response = '📋 Menu hôm nay có: Cappuccino (45K), Latte (50K), Espresso (35K), Matcha Latte (55K) và nhiều món khác. Xem chi tiết tại trang Sản phẩm nhé!';
+                        break;
+                    case 'Khuyến mãi':
+                        response = '🎉 Khuyến mãi HOT: Mua 2 tặng 1 cho tất cả đồ uống! Áp dụng từ 7h-9h sáng và 14h-16h chiều.';
+                        break;
+                    case 'Đặt bàn':
+                        response = '🪑 Để đặt bàn, vui lòng gọi hotline 0123 456 789 hoặc đến trực tiếp cửa hàng. Chúng tôi mở cửa từ 7h-22h hàng ngày.';
+                        break;
+                    default:
+                        response = 'Cảm ơn bạn! Tôi sẽ hỗ trợ bạn ngay.';
+                }
+                addBotMessage(response);
+            }, 800);
+        }
+
+        function addUserMessage(text) {
+            const container = document.getElementById('chatMessages');
+            const messageHtml = `
+                <div class="flex gap-3 justify-end">
+                    <div class="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl rounded-tr-none p-3 shadow-sm max-w-[80%]">
+                        <p class="text-white text-sm">${escapeHtml(text)}</p>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', messageHtml);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addBotMessage(text) {
+            const container = document.getElementById('chatMessages');
+            const messageHtml = `
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span class="text-sm">🤖</span>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl rounded-tl-none p-3 shadow-sm max-w-[80%]">
+                        <p class="text-gray-700 dark:text-gray-300 text-sm">${text}</p>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', messageHtml);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

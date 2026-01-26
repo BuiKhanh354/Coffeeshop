@@ -11,5 +11,6 @@ namespace CoffeeShop.Web.Models
         public string Role { get; set; } = "Customer"; // Admin, Customer
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public bool IsActive { get; set; } = true;
+        public string AvatarUrl { get; set; } = string.Empty;
     }
 }

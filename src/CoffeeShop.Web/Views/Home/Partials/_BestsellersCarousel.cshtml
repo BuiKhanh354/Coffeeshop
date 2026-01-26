@@ -1,0 +1,250 @@
+<!-- Bestsellers Section with Carousel -->
+<section class="py-24 bg-gradient-to-b from-white to-amber-50 dark:from-gray-900 dark:to-gray-800 overflow-hidden">
+        <!-- Section Header -->
+        <div class="text-center mb-12">
+            <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 text-amber-700 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider mb-4">
+                🏆 Bestsellers
+            </span>
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                Được Yêu Thích <span class="text-amber-600 dark:text-amber-400">Nhất</span>
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
+                Những thức uống được khách hàng đánh giá cao nhất tại Coffee Shop
+            </p>
+        </div>
+
+        <!-- Carousel Container -->
+        <div class="relative">
+            <!-- Gradient Overlays for smooth edges - matching section background -->
+            <div class="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-white via-white/80 to-transparent dark:from-gray-900 dark:via-gray-900/80 z-10 pointer-events-none"></div>
+            <div class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-amber-50 via-amber-50/80 to-transparent dark:from-gray-800 dark:via-gray-800/80 z-10 pointer-events-none"></div>
+            
+            <!-- Carousel Track -->
+            <div class="flex gap-6 animate-scroll-left hover:pause-animation" id="bestsellers-carousel">
+                <!-- Product 1 - Hot Cappuccino -->
+                <div class="flex-shrink-0 w-72 group">
+                    <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3">
+                        <div class="absolute top-4 left-4 z-10">
+                            <span class="px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold shadow-lg">
+                                🔥 Hot
+                            </span>
+                        </div>
+                        <div class="aspect-square bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 p-6 flex items-center justify-center">
+                            <img src="/images/Hot_Cappuccino.png" alt="Hot Cappuccino" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Hot Cappuccino</h3>
+                                <span class="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-bold text-sm">45K</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-amber-400 mb-3">
+                                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                <span class="text-gray-400 text-xs ml-2">(256)</span>
+                            </div>
+                            <button class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2 - Iced Caramel Macchiato -->
+                <div class="flex-shrink-0 w-72 group">
+                    <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3">
+                        <div class="absolute top-4 left-4 z-10">
+                            <span class="px-3 py-1 rounded-full bg-gradient-to-r from-sky-500 to-blue-500 text-white text-xs font-bold shadow-lg">
+                                ❄️ Iced
+                            </span>
+                        </div>
+                        <div class="aspect-square bg-gradient-to-br from-sky-100 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/30 p-6 flex items-center justify-center">
+                            <img src="/images/Iced_Caramel_Macchiato.png" alt="Iced Caramel Macchiato" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Caramel Macchiato</h3>
+                                <span class="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-bold text-sm">55K</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-amber-400 mb-3">
+                                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                <span class="text-gray-400 text-xs ml-2">(198)</span>
+                            </div>
+                            <button class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3 - Matcha Burnt Cheesecake -->
+                <div class="flex-shrink-0 w-72 group">
+                    <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3">
+                        <div class="absolute top-4 left-4 z-10">
+                            <span class="px-3 py-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold shadow-lg">
+                                🍵 New
+                            </span>
+                        </div>
+                        <div class="aspect-square bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 p-6 flex items-center justify-center">
+                            <img src="/images/Matcha Burnt Cheesecake.png" alt="Matcha Burnt Cheesecake" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Matcha Cheesecake</h3>
+                                <span class="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-bold text-sm">65K</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-amber-400 mb-3">
+                                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                <span class="text-gray-400 text-xs ml-2">(142)</span>
+                            </div>
+                            <button class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4 - Cold Brew -->
+                <div class="flex-shrink-0 w-72 group">
+                    <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3">
+                        <div class="absolute top-4 left-4 z-10">
+                            <span class="px-3 py-1 rounded-full bg-gradient-to-r from-purple-500 to-violet-500 text-white text-xs font-bold shadow-lg">
+                                ⭐ Top
+                            </span>
+                        </div>
+                        <div class="aspect-square bg-gradient-to-br from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30 p-6 flex items-center justify-center">
+                            <img src="/images/Traditional_Cold_Brew.png" alt="Traditional Cold Brew" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Cold Brew</h3>
+                                <span class="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-bold text-sm">49K</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-amber-400 mb-3">
+                                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                <span class="text-gray-400 text-xs ml-2">(312)</span>
+                            </div>
+                            <button class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 5 - Chocochip Frappe -->
+                <div class="flex-shrink-0 w-72 group">
+                    <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3">
+                        <div class="absolute top-4 left-4 z-10">
+                            <span class="px-3 py-1 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold shadow-lg">
+                                💖 Fav
+                            </span>
+                        </div>
+                        <div class="aspect-square bg-gradient-to-br from-pink-100 to-rose-100 dark:from-pink-900/30 dark:to-rose-900/30 p-6 flex items-center justify-center">
+                            <img src="/images/Chocochip_Frappe.png" alt="Chocochip Frappe" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Chocochip Frappe</h3>
+                                <span class="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-bold text-sm">59K</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-amber-400 mb-3">
+                                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                <span class="text-gray-400 text-xs ml-2">(187)</span>
+                            </div>
+                            <button class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 6 - A-Mê Yuzu -->
+                <div class="flex-shrink-0 w-72 group">
+                    <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3">
+                        <div class="absolute top-4 left-4 z-10">
+                            <span class="px-3 py-1 rounded-full bg-gradient-to-r from-yellow-500 to-amber-500 text-white text-xs font-bold shadow-lg">
+                                🍋 Fresh
+                            </span>
+                        </div>
+                        <div class="aspect-square bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 p-6 flex items-center justify-center">
+                            <img src="/images/A-Me_Yuzu.png" alt="A-Mê Yuzu" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">A-Mê Yuzu</h3>
+                                <span class="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-bold text-sm">52K</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-amber-400 mb-3">
+                                <span>★</span><span>★</span><span>★</span><span>★</span><span>☆</span>
+                                <span class="text-gray-400 text-xs ml-2">(98)</span>
+                            </div>
+                            <button class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Duplicate first products for seamless loop -->
+                <div class="flex-shrink-0 w-72 group">
+                    <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3">
+                        <div class="absolute top-4 left-4 z-10">
+                            <span class="px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold shadow-lg">
+                                🔥 Hot
+                            </span>
+                        </div>
+                        <div class="aspect-square bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 p-6 flex items-center justify-center">
+                            <img src="/images/Hot_Cappuccino.png" alt="Hot Cappuccino" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Hot Cappuccino</h3>
+                                <span class="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-bold text-sm">45K</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-amber-400 mb-3">
+                                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                <span class="text-gray-400 text-xs ml-2">(256)</span>
+                            </div>
+                            <button class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-shrink-0 w-72 group">
+                    <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3">
+                        <div class="absolute top-4 left-4 z-10">
+                            <span class="px-3 py-1 rounded-full bg-gradient-to-r from-sky-500 to-blue-500 text-white text-xs font-bold shadow-lg">
+                                ❄️ Iced
+                            </span>
+                        </div>
+                        <div class="aspect-square bg-gradient-to-br from-sky-100 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/30 p-6 flex items-center justify-center">
+                            <img src="/images/Iced_Caramel_Macchiato.png" alt="Iced Caramel Macchiato" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Caramel Macchiato</h3>
+                                <span class="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-bold text-sm">55K</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-amber-400 mb-3">
+                                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                <span class="text-gray-400 text-xs ml-2">(198)</span>
+                            </div>
+                            <button class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View All Button -->
+        <div class="text-center mt-12">
+            <a href="/Products" class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-lg hover:bg-gray-800 dark:hover:bg-gray-100 transform hover:-translate-y-1 transition-all duration-300 shadow-xl">
+                <span>Xem tất cả sản phẩm</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+        </div>
+</section>

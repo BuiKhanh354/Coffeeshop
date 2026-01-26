@@ -4,120 +4,129 @@
     var categories = ViewBag.Categories as List<CoffeeShop.Web.Models.Category>;
 }
 
-<!-- Products Page -->
-<section class="pt-24 pb-16 min-h-screen bg-gradient-to-b from-amber-50 to-white dark:from-gray-900 dark:to-gray-800">
-    <div class="max-w-7xl mx-auto px-6">
+<!-- Products Hero Section -->
+<section class="relative pt-24 pb-16 overflow-hidden">
+    <!-- Background with gradient -->
+    <div class="absolute inset-0 bg-gradient-to-br from-amber-100 via-orange-50 to-amber-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <!-- Decorative elements -->
+        <div class="absolute top-10 left-10 w-32 h-32 bg-amber-300/30 rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-10 right-10 w-40 h-40 bg-orange-300/30 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-yellow-200/20 rounded-full blur-3xl"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-6">
         <!-- Header -->
-        <div class="text-center mb-8">
-            <span class="inline-block px-4 py-2 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-sm font-semibold mb-4">
-                SẢN PHẨM
+        <div class="text-center mb-10">
+            <span class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-amber-200 to-orange-200 dark:from-amber-900/40 dark:to-orange-900/40 text-amber-800 dark:text-amber-300 text-sm font-bold uppercase tracking-wider mb-6 shadow-sm">
+                ☕ Menu Thức Uống
             </span>
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-                Khám phá <span class="text-amber-600 dark:text-amber-400">cà phê</span> của chúng tôi
+            <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
+                Khám phá <span class="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Hương Vị</span><br>
+                Tuyệt Hảo
             </h1>
-            <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
-                Từ hạt cà phê chọn lọc đến dụng cụ pha chế chuyên nghiệp
+            <p class="text-gray-600 dark:text-gray-400 text-xl max-w-2xl mx-auto">
+                Từ hạt cà phê tuyển chọn đến thức uống tinh tế - mỗi ly là một tác phẩm
             </p>
         </div>
 
-        <!-- Search Bar (Only on Products page) -->
+        <!-- Search Bar -->
         <div class="mb-8">
-            <form method="get" action="/Products" class="max-w-2xl mx-auto">
+            <form method="get" action="/Products" class="max-w-3xl mx-auto">
                 <div class="relative">
-                    <input type="text" name="search" value="@ViewBag.SearchQuery" 
-                           class="w-full px-6 py-4 pl-14 pr-32 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all shadow-lg"
-                           placeholder="Tìm kiếm sản phẩm...">
-                    <svg class="w-6 h-6 text-gray-400 absolute left-5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                    <button type="submit" 
-                            class="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-semibold hover:from-amber-700 hover:to-orange-700 transition-all">
-                        Tìm kiếm
-                    </button>
+                    <div class="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl blur opacity-20"></div>
+                    <div class="relative flex items-center bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-amber-100 dark:border-gray-700 overflow-hidden">
+                        <svg class="w-6 h-6 text-gray-400 ml-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <input type="text" name="search" value="@ViewBag.SearchQuery" 
+                               class="flex-1 px-4 py-5 text-lg bg-transparent border-0 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-0 focus:outline-none"
+                               placeholder="Tìm kiếm Cappuccino, Latte, Matcha...">
+                        <button type="submit" 
+                                class="m-2 px-8 py-3 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold text-lg hover:from-amber-700 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/25">
+                            Tìm
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
 
+        <!-- Category Pills -->
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="/Products" 
+               class="px-6 py-3 rounded-full font-semibold transition-all duration-300 @(ViewBag.CurrentCategory == null ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-gray-700 shadow-md")">
+                <span class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                    </svg>
+                    Tất cả
+                </span>
+            </a>
+            @if (categories != null)
+            {
+                @foreach (var cat in categories)
+                {
+                    var isSelected = ViewBag.CurrentCategory == cat.Id;
+                    <a href="/Products?categoryId=@cat.Id" 
+                       class="px-6 py-3 rounded-full font-semibold transition-all duration-300 @(isSelected ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-gray-700 shadow-md")">
+                        @cat.Name
+                    </a>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="py-12 bg-white dark:bg-gray-900 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-6">
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Sidebar Filter -->
-            <aside class="lg:w-72 flex-shrink-0">
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 sticky top-24">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
-                        </svg>
-                        Bộ lọc
+            <aside class="lg:w-80 flex-shrink-0">
+                <div class="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-800 rounded-3xl p-8 shadow-xl border border-amber-100 dark:border-gray-700 sticky top-24">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                            </svg>
+                        </div>
+                        Bộ lọc nâng cao
                     </h3>
 
                     <form method="get" action="/Products" id="filterForm">
                         <input type="hidden" name="search" value="@ViewBag.SearchQuery" />
+                        <input type="hidden" name="categoryId" value="@ViewBag.CurrentCategory" />
                         
-                        <!-- Categories -->
-                        <div class="mb-6">
-                            <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">Danh mục</h4>
-                            <div class="flex flex-wrap gap-2">
-                                <!-- All categories button -->
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="categoryId" value="" @(ViewBag.CurrentCategory == null ? "checked" : "") 
-                                           class="sr-only peer" onchange="this.form.submit()">
-                                    <span class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300
-                                        peer-checked:bg-gradient-to-r peer-checked:from-amber-500 peer-checked:to-orange-500 peer-checked:text-white peer-checked:shadow-lg peer-checked:shadow-amber-500/25
-                                        bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-                                        </svg>
-                                        Tất cả
-                                    </span>
-                                </label>
-                                @if (categories != null)
-                                {
-                                    @foreach (var cat in categories)
-                                    {
-                                        var isSelected = ViewBag.CurrentCategory == cat.Id;
-                                        <label class="cursor-pointer">
-                                            <input type="radio" name="categoryId" value="@cat.Id" @(isSelected ? "checked" : "") 
-                                                   class="sr-only peer" onchange="this.form.submit()">
-                                            <span class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300
-                                                peer-checked:bg-gradient-to-r peer-checked:from-amber-500 peer-checked:to-orange-500 peer-checked:text-white peer-checked:shadow-lg peer-checked:shadow-amber-500/25
-                                                bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                                                </svg>
-                                                @cat.Name
-                                            </span>
-                                        </label>
-                                    }
-                                }
-                            </div>
-                        </div>
-
                         <!-- Price Range -->
-                        <div class="mb-6">
-                            <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">Khoảng giá</h4>
-                            <div class="space-y-3">
+                        <div class="mb-8">
+                            <h4 class="font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
+                                <span class="text-xl">💰</span> Khoảng giá
+                            </h4>
+                            <div class="space-y-4">
                                 <div>
-                                    <label class="text-sm text-gray-500 dark:text-gray-400">Từ</label>
+                                    <label class="text-sm text-gray-500 dark:text-gray-400 font-medium">Từ (VNĐ)</label>
                                     <input type="number" name="minPrice" value="@ViewBag.MinPrice" placeholder="0" 
-                                           class="w-full mt-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                                           class="w-full mt-2 px-4 py-3 rounded-xl border-2 border-amber-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-semibold focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all">
                                 </div>
                                 <div>
-                                    <label class="text-sm text-gray-500 dark:text-gray-400">Đến</label>
+                                    <label class="text-sm text-gray-500 dark:text-gray-400 font-medium">Đến (VNĐ)</label>
                                     <input type="number" name="maxPrice" value="@ViewBag.MaxPrice" placeholder="500.000" 
-                                           class="w-full mt-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                                           class="w-full mt-2 px-4 py-3 rounded-xl border-2 border-amber-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-semibold focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all">
                                 </div>
                             </div>
                         </div>
 
                         <!-- Sort -->
-                        <div class="mb-6">
-                            <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">Sắp xếp</h4>
+                        <div class="mb-8">
+                            <h4 class="font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
+                                <span class="text-xl">📊</span> Sắp xếp
+                            </h4>
                             <select name="sort" id="sortSelect"
-                                    class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                                    class="w-full px-4 py-3 rounded-xl border-2 border-amber-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-semibold focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all">
                                 <option value="">Mặc định</option>
-                                <option value="price_asc">Giá: Thấp đến cao</option>
-                                <option value="price_desc">Giá: Cao đến thấp</option>
+                                <option value="price_asc">Giá: Thấp → Cao</option>
+                                <option value="price_desc">Giá: Cao → Thấp</option>
                                 <option value="name">Tên A-Z</option>
-                                <option value="newest">Mới nhất</option>
+                                <option value="newest">Mới nhất ✨</option>
                             </select>
                             <script>
                                 document.getElementById('sortSelect').value = '@(ViewBag.CurrentSort ?? "")';
@@ -125,8 +134,13 @@
                         </div>
 
                         <button type="submit" 
-                                class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-semibold hover:from-amber-700 hover:to-orange-700 transition-all duration-300 shadow-lg shadow-amber-500/25">
-                            Áp dụng bộ lọc
+                                class="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold text-lg hover:from-amber-700 hover:to-orange-700 transition-all duration-300 shadow-xl shadow-amber-500/25 transform hover:-translate-y-1">
+                            <span class="flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                                </svg>
+                                Áp dụng bộ lọc
+                            </span>
                         </button>
                     </form>
                 </div>
@@ -135,60 +149,84 @@
             <!-- Products Grid -->
             <div class="flex-1">
                 <!-- Results Info -->
-                <div class="flex justify-between items-center mb-6">
-                    <p class="text-gray-600 dark:text-gray-400">
-                        Hiển thị <span class="font-semibold text-gray-900 dark:text-white">@Model.Count</span> trong <span class="font-semibold text-gray-900 dark:text-white">@ViewBag.TotalItems</span> sản phẩm
+                <div class="flex justify-between items-center mb-8 bg-gray-50 dark:bg-gray-800 rounded-2xl p-4">
+                    <p class="text-gray-600 dark:text-gray-400 font-medium">
+                        Hiển thị <span class="font-bold text-amber-600 dark:text-amber-400">@Model.Count</span> trong <span class="font-bold text-gray-900 dark:text-white">@ViewBag.TotalItems</span> sản phẩm
                         @if (!string.IsNullOrEmpty(ViewBag.SearchQuery as string))
                         {
-                            <span class="ml-2">cho "<span class="font-semibold text-amber-600">@ViewBag.SearchQuery</span>"</span>
+                            <span class="ml-2">cho "<span class="font-bold text-amber-600">@ViewBag.SearchQuery</span>"</span>
                         }
                     </p>
                 </div>
 
                 @if (Model.Count == 0)
                 {
-                    <div class="text-center py-16">
-                        <span class="text-6xl mb-6 block">☕</span>
-                        <h3 class="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2">Không tìm thấy sản phẩm</h3>
-                        <p class="text-gray-500 dark:text-gray-400">Thử thay đổi bộ lọc để xem thêm sản phẩm</p>
+                    <div class="text-center py-20 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-800 rounded-3xl">
+                        <span class="text-8xl mb-6 block">☕</span>
+                        <h3 class="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-3">Không tìm thấy sản phẩm</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-lg">Thử thay đổi bộ lọc để xem thêm sản phẩm</p>
+                        <a href="/Products" class="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-xl bg-amber-600 text-white font-semibold hover:bg-amber-700 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            Xem tất cả sản phẩm
+                        </a>
                     </div>
                 }
                 else
                 {
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
                         @foreach (var product in Model)
                         {
-                            <div class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700">
+                            <div class="group bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100 dark:border-gray-700 transform hover:-translate-y-2">
                                 <!-- Product Image -->
-                                <a href="/Products/Details/@product.Id" class="block aspect-square bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20 relative overflow-hidden">
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <span class="text-6xl group-hover:scale-110 transition-transform duration-300">☕</span>
-                                    </div>
+                                <a href="/Products/Details/@product.Id" class="block aspect-square bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20 relative overflow-hidden p-6">
+                                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                    {
+                                        <img src="@product.ImageUrl" alt="@product.Name" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                                    }
+                                    else
+                                    {
+                                        <div class="w-full h-full flex items-center justify-center">
+                                            <span class="text-7xl group-hover:scale-110 transition-transform duration-500">☕</span>
+                                        </div>
+                                    }
                                     <!-- Badge -->
-                                    <span class="absolute top-3 left-3 px-3 py-1 rounded-full bg-amber-600 text-white text-xs font-semibold">
+                                    <span class="absolute top-4 left-4 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-bold shadow-lg">
                                         @product.CategoryName
                                     </span>
+                                    <!-- Wishlist Button -->
+                                    <button class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-white transition-all shadow-lg opacity-0 group-hover:opacity-100">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                        </svg>
+                                    </button>
                                 </a>
                                 
                                 <!-- Product Info -->
-                                <div class="p-5">
-                                    <a href="/Products/Details/@product.Id" class="block mb-2">
-                                        <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-1">
+                                <div class="p-6">
+                                    <div class="flex items-center gap-1 text-amber-400 mb-3">
+                                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                                        <span class="text-gray-400 text-xs ml-2">(128)</span>
+                                    </div>
+                                    <a href="/Products/Details/@product.Id" class="block mb-3">
+                                        <h3 class="text-xl font-bold text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-1">
                                             @product.Name
                                         </h3>
                                     </a>
-                                    <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-2">
+                                    <p class="text-gray-500 dark:text-gray-400 text-sm mb-5 line-clamp-2 leading-relaxed">
                                         @product.Description
                                     </p>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-xl font-bold text-amber-600 dark:text-amber-400">
+                                    <div class="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
+                                        <span class="text-2xl font-extrabold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
                                             @product.Price.ToString("N0")đ
                                         </span>
                                         <button onclick="addToCart(@product.Id, '@product.Name', '@product.ImageUrl', @product.Price)" 
-                                                class="p-3 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-amber-600 hover:text-white dark:hover:bg-amber-600 transition-all duration-300 group/btn">
+                                                class="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg shadow-amber-500/25 transform hover:scale-105">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                                             </svg>
+                                            Thêm
                                         </button>
                                     </div>
                                 </div>
@@ -199,12 +237,12 @@
                     <!-- Pagination -->
                     @if (ViewBag.TotalPages > 1)
                     {
-                        <div class="flex justify-center gap-2 mt-12">
+                        <div class="flex justify-center gap-3 mt-16">
                             @for (int i = 1; i <= ViewBag.TotalPages; i++)
                             {
                                 var isActive = ViewBag.CurrentPage == i;
                                 <a href="/Products?page=@i&categoryId=@ViewBag.CurrentCategory&sort=@ViewBag.CurrentSort&minPrice=@ViewBag.MinPrice&maxPrice=@ViewBag.MaxPrice" 
-                                   class="w-10 h-10 rounded-lg flex items-center justify-center font-semibold transition-all duration-300 @(isActive ? "bg-amber-600 text-white" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-amber-100 dark:hover:bg-gray-700")">
+                                   class="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg transition-all duration-300 @(isActive ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-amber-100 dark:hover:bg-gray-700 shadow-md")">
                                     @i
                                 </a>
                             }
@@ -227,7 +265,7 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showToast('Đã thêm vào giỏ hàng!');
+                showToast('✅ Đã thêm vào giỏ hàng!');
                 updateCartCount(data.cartCount);
             }
         })
@@ -236,10 +274,15 @@
 
     function showToast(message) {
         const toast = document.createElement('div');
-        toast.className = 'fixed bottom-6 right-6 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in';
+        toast.className = 'fixed bottom-6 right-6 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-2xl shadow-2xl z-50 animate-fade-in-up font-semibold text-lg';
         toast.textContent = message;
         document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(20px)';
+            toast.style.transition = 'all 0.3s ease-out';
+            setTimeout(() => toast.remove(), 300);
+        }, 2700);
     }
 
     function updateCartCount(count) {
@@ -247,6 +290,7 @@
         if (cartBadge) {
             cartBadge.textContent = count;
             cartBadge.classList.remove('hidden');
+            cartBadge.classList.add('animate-scale-in');
         }
     }
 </script>

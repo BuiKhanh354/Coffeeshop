@@ -267,6 +267,73 @@ namespace CoffeeShop.Web.Controllers
             return Convert.ToBase64String(bytes);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadAvatar(IFormFile avatar)
+        {
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return Json(new { success = false, message = "Vui lòng đăng nhập" });
+            }
+
+            if (avatar == null || avatar.Length == 0)
+            {
+                return Json(new { success = false, message = "Vui lòng chọn ảnh" });
+            }
+
+            // Validate file type
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+            var extension = Path.GetExtension(avatar.FileName).ToLowerInvariant();
+            if (!allowedExtensions.Contains(extension))
+            {
+                return Json(new { success = false, message = "Chỉ chấp nhận file ảnh (jpg, png, gif, webp)" });
+            }
+
+            // Validate file size (max 5MB)
+            if (avatar.Length > 5 * 1024 * 1024)
+            {
+                return Json(new { success = false, message = "File ảnh không được vượt quá 5MB" });
+            }
+
+            try
+            {
+                var userEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars");
+                
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var fileName = $"{Guid.NewGuid()}{extension}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await avatar.CopyToAsync(stream);
+                }
+
+                var avatarUrl = $"/uploads/avatars/{fileName}";
+                
+                // Store in memory
+                Services.InMemoryDataStore.UserAvatars[userEmail] = avatarUrl;
+
+                return Json(new { success = true, avatarUrl = avatarUrl });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Có lỗi xảy ra: " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetAvatar()
+        {
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
+            var avatarUrl = Services.InMemoryDataStore.UserAvatars.GetValueOrDefault(userEmail, "");
+            return Json(new { avatarUrl });
+        }
+
         private static bool VerifyPassword(string password, string hash)
         {
             return HashPassword(password) == hash;
