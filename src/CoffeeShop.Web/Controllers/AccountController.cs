@@ -3,17 +3,25 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using CoffeeShop.Web.Models;
+using CoffeeShop.Web.Services;
 
 namespace CoffeeShop.Web.Controllers
 {
     public class AccountController : Controller
     {
-        // In-memory user storage (demo - should use database in production)
-        private static readonly List<User> Users = new()
+        private readonly IUserService _userService;
+        private readonly ICartService _cartService;
+        private readonly IOrderService _orderService;
+
+        public AccountController(
+            IUserService userService,
+            ICartService cartService,
+            IOrderService orderService)
         {
-            new User { Id = 1, Email = "admin@coffeeshop.vn", PasswordHash = HashPassword("Admin@123"), FullName = "Quản trị viên", Phone = "0123456789", Role = "Admin" },
-            new User { Id = 2, Email = "user@coffeeshop.vn", PasswordHash = HashPassword("User@123"), FullName = "Khách hàng Demo", Phone = "0987654321", Role = "Customer" }
-        };
+            _userService = userService;
+            _cartService = cartService;
+            _orderService = orderService;
+        }
 
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
@@ -22,7 +30,7 @@ namespace CoffeeShop.Web.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            
+
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -36,9 +44,9 @@ namespace CoffeeShop.Web.Controllers
                 return View(model);
             }
 
-            var user = Users.FirstOrDefault(u => u.Email.ToLower() == model.Email.ToLower());
-            
-            if (user == null || !VerifyPassword(model.Password, user.PasswordHash))
+            var user = await _userService.AuthenticateAsync(model.Email, model.Password);
+
+            if (user == null)
             {
                 ModelState.AddModelError("", "Email hoặc mật khẩu không đúng");
                 return View(model);
@@ -50,32 +58,21 @@ namespace CoffeeShop.Web.Controllers
                 return View(model);
             }
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.FullName),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
+            await SignInUserAsync(user, model.RememberMe);
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties
+            // Merge guest cart if exists
+            var sessionId = HttpContext.Session.GetString("CartSessionId");
+            if (!string.IsNullOrEmpty(sessionId))
             {
-                IsPersistent = model.RememberMe,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(model.RememberMe ? 30 : 1)
-            };
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
+                await _cartService.MergeCartsAsync(user.Id, sessionId);
+                HttpContext.Session.Remove("CartSessionId");
+            }
 
             if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
             {
                 return Redirect(model.ReturnUrl);
             }
 
-            // Redirect based on role
             if (user.Role == "Admin")
             {
                 return RedirectToAction("Index", "Admin");
@@ -104,40 +101,33 @@ namespace CoffeeShop.Web.Controllers
             }
 
             // Check if email exists
-            if (Users.Any(u => u.Email.ToLower() == model.Email.ToLower()))
+            if (await _userService.EmailExistsAsync(model.Email))
             {
                 ModelState.AddModelError("Email", "Email này đã được sử dụng");
                 return View(model);
             }
 
+            // Check if username exists (use email as username if not provided)
+            var username = model.Email.Split('@')[0];
+            if (await _userService.UsernameExistsAsync(username))
+            {
+                username = $"{username}{DateTime.Now.Ticks % 10000}";
+            }
+
             // Create new user
             var newUser = new User
             {
-                Id = Users.Max(u => u.Id) + 1,
+                Username = username,
                 Email = model.Email,
-                PasswordHash = HashPassword(model.Password),
                 FullName = model.FullName,
-                Phone = model.Phone,
-                Role = "Customer",
-                CreatedAt = DateTime.Now
+                PhoneNumber = model.Phone,
+                Role = "Customer"
             };
 
-            Users.Add(newUser);
+            await _userService.CreateAsync(newUser, model.Password);
 
             // Auto login after register
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, newUser.Id.ToString()),
-                new Claim(ClaimTypes.Email, newUser.Email),
-                new Claim(ClaimTypes.Name, newUser.FullName),
-                new Claim(ClaimTypes.Role, newUser.Role)
-            };
-
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity));
+            await SignInUserAsync(newUser, false);
 
             TempData["Success"] = "Đăng ký thành công! Chào mừng bạn đến với Coffee Shop.";
             return RedirectToAction("Index", "Home");
@@ -162,7 +152,7 @@ namespace CoffeeShop.Web.Controllers
                 }
                 return RedirectToAction("Index", "Home");
             }
-            
+
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -176,9 +166,9 @@ namespace CoffeeShop.Web.Controllers
                 return View(model);
             }
 
-            var user = Users.FirstOrDefault(u => u.Email.ToLower() == model.Email.ToLower());
-            
-            if (user == null || !VerifyPassword(model.Password, user.PasswordHash))
+            var user = await _userService.AuthenticateAsync(model.Email, model.Password);
+
+            if (user == null)
             {
                 ModelState.AddModelError("", "Email hoặc mật khẩu không đúng");
                 return View(model);
@@ -196,25 +186,7 @@ namespace CoffeeShop.Web.Controllers
                 return View(model);
             }
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.FullName),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
-
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties
-            {
-                IsPersistent = model.RememberMe,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(model.RememberMe ? 30 : 1)
-            };
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
+            await SignInUserAsync(user, model.RememberMe);
 
             if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
             {
@@ -230,23 +202,31 @@ namespace CoffeeShop.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
             if (User.Identity?.IsAuthenticated != true)
             {
                 return RedirectToAction("Login");
             }
-            return View();
+
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var user = await _userService.GetByIdAsync(userId);
+
+            return View(user);
         }
 
         [HttpGet]
-        public IActionResult Orders()
+        public async Task<IActionResult> Orders()
         {
             if (User.Identity?.IsAuthenticated != true)
             {
                 return RedirectToAction("Login");
             }
-            return View();
+
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var orders = await _orderService.GetByUserIdAsync(userId);
+
+            return View(orders);
         }
 
         [HttpGet]
@@ -259,12 +239,32 @@ namespace CoffeeShop.Web.Controllers
             return View();
         }
 
-        // Simple password hashing (demo - use BCrypt or similar in production)
-        private static string HashPassword(string password)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword, string confirmPassword)
         {
-            using var sha256 = System.Security.Cryptography.SHA256.Create();
-            var bytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password + "CoffeeShopSalt"));
-            return Convert.ToBase64String(bytes);
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return RedirectToAction("Login");
+            }
+
+            if (newPassword != confirmPassword)
+            {
+                ModelState.AddModelError("", "Mật khẩu xác nhận không khớp");
+                return View();
+            }
+
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var result = await _userService.ChangePasswordAsync(userId, currentPassword, newPassword);
+
+            if (!result)
+            {
+                ModelState.AddModelError("", "Mật khẩu hiện tại không đúng");
+                return View();
+            }
+
+            TempData["Success"] = "Đổi mật khẩu thành công!";
+            return RedirectToAction("Profile");
         }
 
         [HttpPost]
@@ -281,7 +281,6 @@ namespace CoffeeShop.Web.Controllers
                 return Json(new { success = false, message = "Vui lòng chọn ảnh" });
             }
 
-            // Validate file type
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
             var extension = Path.GetExtension(avatar.FileName).ToLowerInvariant();
             if (!allowedExtensions.Contains(extension))
@@ -289,7 +288,6 @@ namespace CoffeeShop.Web.Controllers
                 return Json(new { success = false, message = "Chỉ chấp nhận file ảnh (jpg, png, gif, webp)" });
             }
 
-            // Validate file size (max 5MB)
             if (avatar.Length > 5 * 1024 * 1024)
             {
                 return Json(new { success = false, message = "File ảnh không được vượt quá 5MB" });
@@ -297,9 +295,8 @@ namespace CoffeeShop.Web.Controllers
 
             try
             {
-                var userEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars");
-                
+
                 if (!Directory.Exists(uploadsFolder))
                 {
                     Directory.CreateDirectory(uploadsFolder);
@@ -314,9 +311,10 @@ namespace CoffeeShop.Web.Controllers
                 }
 
                 var avatarUrl = $"/uploads/avatars/{fileName}";
-                
-                // Store in memory
-                Services.InMemoryDataStore.UserAvatars[userEmail] = avatarUrl;
+
+                // TODO: Save avatar URL to user in database
+                // var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+                // await _userService.UpdateAvatarAsync(userId, avatarUrl);
 
                 return Json(new { success = true, avatarUrl = avatarUrl });
             }
@@ -326,17 +324,27 @@ namespace CoffeeShop.Web.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult GetAvatar()
+        private async Task SignInUserAsync(User user, bool rememberMe)
         {
-            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
-            var avatarUrl = Services.InMemoryDataStore.UserAvatars.GetValueOrDefault(userEmail, "");
-            return Json(new { avatarUrl });
-        }
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.FullName),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
 
-        private static bool VerifyPassword(string password, string hash)
-        {
-            return HashPassword(password) == hash;
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = rememberMe,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(rememberMe ? 30 : 1)
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
         }
     }
 }

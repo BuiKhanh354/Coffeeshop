@@ -1,16 +1,50 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace CoffeeShop.Web.Models
 {
+    [Table("Users")]
     public class User
     {
+        [Key]
         public int Id { get; set; }
-        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(50)]
+        public string Username { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(255)]
         public string PasswordHash { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(100)]
         public string FullName { get; set; } = string.Empty;
-        public string Phone { get; set; } = string.Empty;
-        public string Address { get; set; } = string.Empty;
-        public string Role { get; set; } = "Customer"; // Admin, Customer
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [Required]
+        [StringLength(100)]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [StringLength(15)]
+        public string? PhoneNumber { get; set; }
+
+        [StringLength(255)]
+        public string? Address { get; set; }
+
+        [Required]
+        [StringLength(20)]
+        public string Role { get; set; } = "Customer"; // Admin, Staff, Customer
+
         public bool IsActive { get; set; } = true;
-        public string AvatarUrl { get; set; } = string.Empty;
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public DateTime? UpdatedAt { get; set; }
+
+        // Navigation properties
+        public virtual ICollection<Order>? Orders { get; set; }
+        public virtual ICollection<Review>? Reviews { get; set; }
+        public virtual Cart? Cart { get; set; }
     }
 }

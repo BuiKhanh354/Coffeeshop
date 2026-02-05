@@ -1,86 +1,57 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using CoffeeShop.Web.Models;
+using CoffeeShop.Web.Services;
 
 namespace CoffeeShop.Web.Controllers
 {
     public class ProductsController : Controller
     {
-        // Sample data - trong thực tế sẽ lấy từ database
-        private static readonly List<Category> Categories = new()
+        private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
+        private readonly IReviewService _reviewService;
+
+        public ProductsController(
+            IProductService productService,
+            ICategoryService categoryService,
+            IReviewService reviewService)
         {
-            new Category { Id = 1, Name = "Cà phê hạt", Description = "Cà phê hạt rang xay nguyên chất" },
-            new Category { Id = 2, Name = "Cà phê bột", Description = "Cà phê bột pha phin truyền thống" },
-            new Category { Id = 3, Name = "Cà phê hòa tan", Description = "Cà phê hòa tan tiện lợi" },
-            new Category { Id = 4, Name = "Bình giữ nhiệt", Description = "Bình giữ nhiệt cao cấp, giữ nóng lâu" },
-            new Category { Id = 5, Name = "Ly cà phê", Description = "Ly uống cà phê đa dạng kiểu dáng" },
-            new Category { Id = 6, Name = "Cà phê đóng gói", Description = "Túi cà phê đóng gói sẵn tiện lợi" }
-        };
+            _productService = productService;
+            _categoryService = categoryService;
+            _reviewService = reviewService;
+        }
 
-        private static readonly List<Product> Products = new()
+        public async Task<IActionResult> Index(int? categoryId, decimal? minPrice, decimal? maxPrice, string? sort, string? search, int page = 1)
         {
-            new Product { Id = 1, Name = "Espresso Arabica", Description = "Hạt cà phê Arabica rang đậm, hương thơm nồng nàn, vị đắng thanh", Price = 185000, StockQuantity = 50, ImageUrl = "/images/products/espresso.jpg", CategoryId = 1, CategoryName = "Cà phê hạt" },
-            new Product { Id = 2, Name = "Robusta Đặc Biệt", Description = "Hạt Robusta nguyên chất từ Tây Nguyên, đậm đà mạnh mẽ", Price = 165000, StockQuantity = 45, ImageUrl = "/images/products/robusta.jpg", CategoryId = 1, CategoryName = "Cà phê hạt" },
-            new Product { Id = 3, Name = "Cà Phê Phin Truyền Thống", Description = "Cà phê bột pha phin, hương vị Việt Nam đích thực", Price = 95000, StockQuantity = 100, ImageUrl = "/images/products/phin.jpg", CategoryId = 2, CategoryName = "Cà phê bột" },
-            new Product { Id = 4, Name = "Cà Phê Sữa Đá", Description = "Cà phê bột pha sữa đá, vị ngọt béo quyến rũ", Price = 85000, StockQuantity = 80, ImageUrl = "/images/products/sua-da.jpg", CategoryId = 2, CategoryName = "Cà phê bột" },
-            new Product { Id = 5, Name = "Cà Phê Hòa Tan 3in1", Description = "Cà phê hòa tan tiện lợi, vị cân bằng", Price = 125000, StockQuantity = 200, ImageUrl = "/images/products/3in1.jpg", CategoryId = 3, CategoryName = "Cà phê hòa tan" },
-            new Product { Id = 6, Name = "Cold Brew Concentrate", Description = "Cà phê ủ lạnh 24h, vị mượt mà không chua", Price = 220000, StockQuantity = 30, ImageUrl = "/images/products/cold-brew.jpg", CategoryId = 1, CategoryName = "Cà phê hạt" },
-            new Product { Id = 7, Name = "Bình Giữ Nhiệt Inox 500ml", Description = "Bình giữ nhiệt inox 304, giữ nóng 12h, giữ lạnh 24h", Price = 350000, StockQuantity = 40, ImageUrl = "/images/binhgiunhiet.png", CategoryId = 4, CategoryName = "Bình giữ nhiệt" },
-            new Product { Id = 8, Name = "Bình Giữ Nhiệt Mini 350ml", Description = "Bình giữ nhiệt nhỏ gọn, tiện mang theo", Price = 250000, StockQuantity = 55, ImageUrl = "/images/products/binh-mini.jpg", CategoryId = 4, CategoryName = "Bình giữ nhiệt" },
-            new Product { Id = 9, Name = "Mocha Blend Premium", Description = "Blend đặc biệt với hương chocolate tự nhiên", Price = 245000, StockQuantity = 35, ImageUrl = "/images/products/mocha.jpg", CategoryId = 1, CategoryName = "Cà phê hạt" },
-            new Product { Id = 10, Name = "Cà Phê Đắk Lắk", Description = "Cà phê nguyên chất từ cao nguyên Đắk Lắk", Price = 175000, StockQuantity = 55, ImageUrl = "/images/products/daklak.jpg", CategoryId = 2, CategoryName = "Cà phê bột" },
-            new Product { Id = 11, Name = "Cappuccino Instant", Description = "Cà phê hòa tan cappuccino kem béo", Price = 145000, StockQuantity = 120, ImageUrl = "/images/products/cappuccino.jpg", CategoryId = 3, CategoryName = "Cà phê hòa tan" },
-            new Product { Id = 12, Name = "Ly Sứ Cao Cấp 300ml", Description = "Ly sứ uống cà phê thiết kế sang trọng", Price = 120000, StockQuantity = 80, ImageUrl = "/images/products/ly-su.jpg", CategoryId = 5, CategoryName = "Ly cà phê" },
-            new Product { Id = 13, Name = "Ly Thủy Tinh 2 Lớp", Description = "Ly thủy tinh 2 lớp cách nhiệt, giữ nóng lâu", Price = 150000, StockQuantity = 60, ImageUrl = "/images/products/ly-thuy-tinh.jpg", CategoryId = 5, CategoryName = "Ly cà phê" },
-            new Product { Id = 14, Name = "Túi Cà Phê Drip 10 gói", Description = "Cà phê phin giấy tiện lợi, pha nhanh 3 phút", Price = 85000, StockQuantity = 150, ImageUrl = "/images/product-1.png", CategoryId = 6, CategoryName = "Cà phê đóng gói" },
-            
-        };
+            int pageSize = 12;
+            var (products, totalCount) = await _productService.GetPagedAsync(page, pageSize, categoryId, search);
 
-        public IActionResult Index(int? categoryId, decimal? minPrice, decimal? maxPrice, string? sort, string? search, int page = 1)
-        {
-            var query = Products.AsQueryable();
-
-            // Filter by search
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                var searchTerm = search.ToLower();
-                query = query.Where(p => p.Name.ToLower().Contains(searchTerm) || 
-                                        p.Description.ToLower().Contains(searchTerm) ||
-                                        p.CategoryName.ToLower().Contains(searchTerm));
-            }
-
-            // Filter by category
-            if (categoryId.HasValue && categoryId > 0)
-            {
-                query = query.Where(p => p.CategoryId == categoryId);
-            }
-
-            // Filter by price
+            // Apply price filter (client-side for now, can be moved to service)
+            var filteredProducts = products.ToList();
             if (minPrice.HasValue)
             {
-                query = query.Where(p => p.Price >= minPrice);
+                filteredProducts = filteredProducts.Where(p => p.Price >= minPrice.Value).ToList();
             }
             if (maxPrice.HasValue)
             {
-                query = query.Where(p => p.Price <= maxPrice);
+                filteredProducts = filteredProducts.Where(p => p.Price <= maxPrice.Value).ToList();
             }
 
-            // Sort
-            query = sort switch
+            // Apply sorting
+            filteredProducts = sort switch
             {
-                "price_asc" => query.OrderBy(p => p.Price),
-                "price_desc" => query.OrderByDescending(p => p.Price),
-                "name" => query.OrderBy(p => p.Name),
-                "newest" => query.OrderByDescending(p => p.CreatedAt),
-                _ => query.OrderBy(p => p.Id)
+                "price_asc" => filteredProducts.OrderBy(p => p.Price).ToList(),
+                "price_desc" => filteredProducts.OrderByDescending(p => p.Price).ToList(),
+                "name" => filteredProducts.OrderBy(p => p.Name).ToList(),
+                "newest" => filteredProducts.OrderByDescending(p => p.CreatedAt).ToList(),
+                _ => filteredProducts
             };
 
-            // Pagination
-            int pageSize = 12;
-            int totalItems = query.Count();
-            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
-            var products = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-            ViewBag.Categories = Categories;
+            var categories = await _categoryService.GetActiveAsync();
+
+            ViewBag.Categories = categories;
             ViewBag.CurrentCategory = categoryId;
             ViewBag.CurrentSort = sort;
             ViewBag.MinPrice = minPrice;
@@ -88,41 +59,44 @@ namespace CoffeeShop.Web.Controllers
             ViewBag.SearchQuery = search;
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
-            ViewBag.TotalItems = totalItems;
+            ViewBag.TotalItems = totalCount;
 
-            return View(products);
+            return View(filteredProducts);
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var product = Products.FirstOrDefault(p => p.Id == id);
+            var product = await _productService.GetByIdAsync(id);
             if (product == null)
             {
                 return NotFound();
             }
 
+            // Increment view count
+            await _productService.IncrementViewCountAsync(id);
+
             // Related products (same category)
-            var relatedProducts = Products
-                .Where(p => p.CategoryId == product.CategoryId && p.Id != product.Id)
+            var relatedProducts = (await _productService.GetByCategoryAsync(product.CategoryId))
+                .Where(p => p.Id != product.Id)
                 .Take(4)
                 .ToList();
 
             // Get reviews for this product
-            var reviews = Services.InMemoryDataStore.GetProductReviews(id);
-            var averageRating = Services.InMemoryDataStore.GetProductAverageRating(id);
-            var reviewCount = Services.InMemoryDataStore.GetProductReviewCount(id);
+            var reviews = await _reviewService.GetByProductIdAsync(id, true);
+            var averageRating = await _reviewService.GetAverageRatingAsync(id);
+            var reviewCount = await _reviewService.GetReviewCountAsync(id);
 
             ViewBag.RelatedProducts = relatedProducts;
             ViewBag.Reviews = reviews;
             ViewBag.AverageRating = averageRating;
             ViewBag.ReviewCount = reviewCount;
-            
+
             return View(product);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddReview(int productId, int rating, string comment)
+        public async Task<IActionResult> AddReview(int productId, int rating, string comment)
         {
             if (User.Identity?.IsAuthenticated != true)
             {
@@ -139,31 +113,34 @@ namespace CoffeeShop.Web.Controllers
                 return Json(new { success = false, message = "Vui lòng nhập nội dung đánh giá" });
             }
 
-            var userEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
             var userName = User.Identity?.Name ?? "Khách hàng";
-            var userAvatar = Services.InMemoryDataStore.UserAvatars.GetValueOrDefault(userEmail, "");
+
+            // Check if user already reviewed this product
+            if (await _reviewService.HasUserReviewedAsync(userId, productId))
+            {
+                return Json(new { success = false, message = "Bạn đã đánh giá sản phẩm này rồi" });
+            }
 
             var review = new Review
             {
-                Id = Services.InMemoryDataStore.GetNextReviewId(),
                 ProductId = productId,
-                UserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0"),
-                UserName = userName,
-                UserAvatar = userAvatar,
+                UserId = userId,
                 Rating = rating,
-                Comment = comment.Trim(),
-                CreatedAt = DateTime.Now
+                Comment = comment.Trim()
             };
 
-            Services.InMemoryDataStore.Reviews.Add(review);
+            await _reviewService.CreateAsync(review);
 
-            return Json(new { 
-                success = true, 
-                message = "Cảm ơn bạn đã đánh giá!",
-                review = new {
+            return Json(new
+            {
+                success = true,
+                message = "Cảm ơn bạn đã đánh giá! Đánh giá sẽ hiển thị sau khi được duyệt.",
+                review = new
+                {
                     review.Id,
-                    review.UserName,
-                    review.UserAvatar,
+                    UserName = userName,
+                    UserAvatar = "",
                     review.Rating,
                     review.Comment,
                     CreatedAt = review.CreatedAt.ToString("dd/MM/yyyy HH:mm")
@@ -172,18 +149,15 @@ namespace CoffeeShop.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Search(string q)
+        public async Task<IActionResult> Search(string q)
         {
             if (string.IsNullOrWhiteSpace(q))
             {
                 return Json(new List<object>());
             }
 
-            var searchTerm = q.ToLower();
-            var results = Products
-                .Where(p => p.Name.ToLower().Contains(searchTerm) || 
-                           p.Description.ToLower().Contains(searchTerm) ||
-                           p.CategoryName.ToLower().Contains(searchTerm))
+            var products = await _productService.SearchAsync(q);
+            var results = products
                 .Take(6)
                 .Select(p => new
                 {

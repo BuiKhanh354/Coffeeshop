@@ -4,23 +4,19 @@ namespace CoffeeShop.Web.Services
 {
     /// <summary>
     /// In-memory data store for demo purposes.
-    /// Data is lost when the application restarts.
+    /// This file is kept for backward compatibility but is no longer used.
+    /// All data is now stored in MySQL database via Entity Framework Core.
     /// </summary>
+    [Obsolete("Use database services instead. This class is kept for reference only.")]
     public static class InMemoryDataStore
     {
         // User avatars: Dictionary<UserEmail, AvatarUrl>
         public static Dictionary<string, string> UserAvatars { get; } = new();
 
-        // Product reviews: List of all reviews
-        public static List<Review> Reviews { get; } = new()
-        {
-            // Demo reviews
-            new Review { Id = 1, ProductId = 1, UserId = 1, UserName = "Nguyễn Văn A", Rating = 5, Comment = "Cà phê rất ngon, hương vị đậm đà!", CreatedAt = DateTime.Now.AddDays(-5) },
-            new Review { Id = 2, ProductId = 1, UserId = 2, UserName = "Trần Thị B", Rating = 4, Comment = "Giao hàng nhanh, đóng gói cẩn thận.", CreatedAt = DateTime.Now.AddDays(-3) },
-            new Review { Id = 3, ProductId = 2, UserId = 3, UserName = "Lê Minh C", Rating = 5, Comment = "Sản phẩm tuyệt vời, sẽ mua lại!", CreatedAt = DateTime.Now.AddDays(-1) }
-        };
+        // Product reviews: List of all reviews - DEPRECATED, use ReviewService instead
+        public static List<Review> Reviews { get; } = new();
 
-        private static int _nextReviewId = 4;
+        private static int _nextReviewId = 1;
 
         public static int GetNextReviewId() => _nextReviewId++;
 

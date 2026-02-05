@@ -1,95 +1,148 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using CoffeeShop.Web.Models;
+using CoffeeShop.Web.Services;
 
 namespace CoffeeShop.Web.Controllers
 {
     public class CartController : Controller
     {
-        // Sử dụng static để giả lập session storage (trong thực tế sẽ dùng Session hoặc Database)
-        private static List<CartItem> _cartItems = new();
+        private readonly ICartService _cartService;
+        private readonly IProductService _productService;
 
-        public IActionResult Index()
+        public CartController(ICartService cartService, IProductService productService)
         {
-            ViewBag.SubTotal = _cartItems.Sum(x => x.TotalPrice);
-            ViewBag.ShippingFee = _cartItems.Count > 0 ? 30000m : 0m;
-            ViewBag.Total = ViewBag.SubTotal + ViewBag.ShippingFee;
-            return View(_cartItems);
+            _cartService = cartService;
+            _productService = productService;
+        }
+
+        private int? GetCurrentUserId()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            }
+            return null;
+        }
+
+        private string GetOrCreateSessionId()
+        {
+            var sessionId = HttpContext.Session.GetString("CartSessionId");
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                sessionId = Guid.NewGuid().ToString();
+                HttpContext.Session.SetString("CartSessionId", sessionId);
+            }
+            return sessionId;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var userId = GetCurrentUserId();
+            var sessionId = userId.HasValue ? null : GetOrCreateSessionId();
+
+            var cart = await _cartService.GetOrCreateCartAsync(userId, sessionId);
+            var cartItems = cart.CartItems?.ToList() ?? new List<CartItem>();
+
+            var subTotal = cartItems.Sum(x => x.TotalPrice);
+            var shippingFee = cartItems.Count > 0 ? 30000m : 0m;
+
+            ViewBag.SubTotal = subTotal;
+            ViewBag.ShippingFee = shippingFee;
+            ViewBag.Total = subTotal + shippingFee;
+
+            return View(cartItems);
         }
 
         [HttpPost]
-        public IActionResult Add(int productId, string productName, string imageUrl, decimal unitPrice, int quantity = 1)
+        public async Task<IActionResult> Add(int productId, int quantity = 1)
         {
-            var existingItem = _cartItems.FirstOrDefault(x => x.ProductId == productId);
-            if (existingItem != null)
-            {
-                existingItem.Quantity += quantity;
-            }
-            else
-            {
-                _cartItems.Add(new CartItem
-                {
-                    ProductId = productId,
-                    ProductName = productName,
-                    ImageUrl = imageUrl,
-                    UnitPrice = unitPrice,
-                    Quantity = quantity
-                });
-            }
+            var userId = GetCurrentUserId();
+            var sessionId = userId.HasValue ? null : GetOrCreateSessionId();
 
-            return Json(new { success = true, cartCount = _cartItems.Sum(x => x.Quantity) });
+            var cart = await _cartService.GetOrCreateCartAsync(userId, sessionId);
+            await _cartService.AddToCartAsync(cart.Id, productId, quantity);
+
+            var cartCount = await _cartService.GetCartItemCountAsync(userId, sessionId);
+
+            return Json(new { success = true, cartCount });
         }
 
         [HttpPost]
-        public IActionResult UpdateQuantity(int productId, int quantity)
+        public async Task<IActionResult> UpdateQuantity(int cartItemId, int quantity)
         {
-            var item = _cartItems.FirstOrDefault(x => x.ProductId == productId);
-            if (item != null)
-            {
-                if (quantity <= 0)
-                {
-                    _cartItems.Remove(item);
-                }
-                else
-                {
-                    item.Quantity = quantity;
-                }
-            }
+            await _cartService.UpdateQuantityAsync(cartItemId, quantity);
 
-            return Json(new { 
-                success = true, 
-                cartCount = _cartItems.Sum(x => x.Quantity),
-                subTotal = _cartItems.Sum(x => x.TotalPrice),
-                total = _cartItems.Sum(x => x.TotalPrice) + (_cartItems.Count > 0 ? 30000 : 0)
+            var userId = GetCurrentUserId();
+            var sessionId = userId.HasValue ? null : GetOrCreateSessionId();
+
+            var cart = await _cartService.GetOrCreateCartAsync(userId, sessionId);
+            var cartItems = cart.CartItems?.ToList() ?? new List<CartItem>();
+
+            var subTotal = cartItems.Sum(x => x.TotalPrice);
+            var cartCount = cartItems.Sum(x => x.Quantity);
+
+            return Json(new
+            {
+                success = true,
+                cartCount,
+                subTotal,
+                total = subTotal + (cartItems.Count > 0 ? 30000 : 0)
             });
         }
 
         [HttpPost]
-        public IActionResult Remove(int productId)
+        public async Task<IActionResult> Remove(int cartItemId)
         {
-            var item = _cartItems.FirstOrDefault(x => x.ProductId == productId);
-            if (item != null)
-            {
-                _cartItems.Remove(item);
-            }
+            await _cartService.RemoveFromCartAsync(cartItemId);
 
-            return Json(new { 
-                success = true, 
-                cartCount = _cartItems.Sum(x => x.Quantity),
-                subTotal = _cartItems.Sum(x => x.TotalPrice),
-                total = _cartItems.Sum(x => x.TotalPrice) + (_cartItems.Count > 0 ? 30000 : 0)
+            var userId = GetCurrentUserId();
+            var sessionId = userId.HasValue ? null : GetOrCreateSessionId();
+
+            var cart = await _cartService.GetOrCreateCartAsync(userId, sessionId);
+            var cartItems = cart.CartItems?.ToList() ?? new List<CartItem>();
+
+            var subTotal = cartItems.Sum(x => x.TotalPrice);
+            var cartCount = cartItems.Sum(x => x.Quantity);
+
+            return Json(new
+            {
+                success = true,
+                cartCount,
+                subTotal,
+                total = subTotal + (cartItems.Count > 0 ? 30000 : 0)
             });
         }
 
         [HttpGet]
-        public IActionResult GetCount()
+        public async Task<IActionResult> GetCount()
         {
-            return Json(new { count = _cartItems.Sum(x => x.Quantity) });
+            var userId = GetCurrentUserId();
+            var sessionId = userId.HasValue ? null : GetOrCreateSessionId();
+
+            var count = await _cartService.GetCartItemCountAsync(userId, sessionId);
+            return Json(new { count });
         }
 
         [HttpGet]
-        public IActionResult GetItems()
+        public async Task<IActionResult> GetItems()
         {
-            return Json(_cartItems);
+            var userId = GetCurrentUserId();
+            var sessionId = userId.HasValue ? null : GetOrCreateSessionId();
+
+            var cart = await _cartService.GetOrCreateCartAsync(userId, sessionId);
+            var cartItems = cart.CartItems?.Select(ci => new
+            {
+                ci.Id,
+                ci.ProductId,
+                ProductName = ci.Product?.Name ?? "",
+                ImageUrl = ci.Product?.ImageUrl ?? "",
+                UnitPrice = ci.Product?.Price ?? 0,
+                ci.Quantity,
+                TotalPrice = (ci.Product?.Price ?? 0) * ci.Quantity
+            }).ToList();
+
+            return Json(cartItems);
         }
     }
 }
