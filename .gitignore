@@ -4,4 +4,4 @@ src/coffee_shop_doc/
 **/obj/
 .agent/
 skills/
-appsettings.Development.json
+.vs/
