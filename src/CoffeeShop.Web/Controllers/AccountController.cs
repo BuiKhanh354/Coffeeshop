@@ -230,6 +230,41 @@ namespace CoffeeShop.Web.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetOrderDetail(int id)
+        {
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return Unauthorized();
+            }
+
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var order = await _orderService.GetByIdAsync(id);
+
+            if (order == null || order.UserId != userId)
+            {
+                return NotFound();
+            }
+
+            return Json(new
+            {
+                Id = order.Id,
+                TotalAmount = order.TotalAmount,
+                OrderStatus = order.OrderStatus,
+                PaymentMethod = order.PaymentMethod,
+                ShippingName = order.CustomerName,
+                ShippingPhone = order.CustomerPhone,
+                ShippingAddress = order.ShippingAddress,
+                OrderDetails = order.OrderDetails?.Select(od => new
+                {
+                    ProductName = od.ProductName,
+                    Quantity = od.Quantity,
+                    UnitPrice = od.UnitPrice,
+                    TotalPrice = od.TotalPrice
+                })
+            });
+        }
+
+        [HttpGet]
         public IActionResult ChangePassword()
         {
             if (User.Identity?.IsAuthenticated != true)

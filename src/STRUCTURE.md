@@ -10,6 +10,14 @@ src/
     ├── Program.cs
     ├── tailwind.config.js
     │
+    ├── Chatbot/
+    │   ├── Models/
+    │   │   ├── ChatRequest.cs
+    │   │   └── ChatResponse.cs
+    │   └── Services/
+    │       ├── IChatbotService.cs
+    │       └── ChatbotService.cs   (gọi Google Gemini API)
+    │
     ├── Controllers/
     │   └── HomeController.cs
     │
@@ -97,7 +105,8 @@ src/
 
 | Thư mục | Mô tả |
 |---------|-------|
-| **Controllers/** | Chứa các controller (HomeController.cs) |
+| **Chatbot/** | Trợ lý AI (Models, Services gọi Google Gemini API) |
+| **Controllers/** | Chứa các controller (HomeController.cs, ChatbotController.cs) |
 | **Models/** | Chứa các model (ErrorViewModel.cs) |
 | **Views/** | Chứa các Razor view (.cshtml) - tách thành Home và Shared |
 | **Properties/** | Cấu hình khởi chạy (launchSettings.json) |

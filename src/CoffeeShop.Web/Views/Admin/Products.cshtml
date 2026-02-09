@@ -1,29 +1,32 @@
+@model IEnumerable<CoffeeShop.Web.Models.Product>
 @{
     ViewData["Title"] = "Quản lý Sản phẩm";
     Layout = "_AdminLayout";
-}
-
-@* Demo Products Data *@
-@{
-    var products = new[] {
-        new { Id = 1, Name = "Espresso Arabica", Category = "Cà phê hạt", Price = 185000, Stock = 50, Image = "/images/cafe1.jpg" },
-        new { Id = 2, Name = "Robusta Đặc Biệt", Category = "Cà phê hạt", Price = 165000, Stock = 35, Image = "/images/cafe2.jpg" },
-        new { Id = 3, Name = "Cà Phê Phin Truyền Thống", Category = "Cà phê bột", Price = 95000, Stock = 100, Image = "/images/cafe3.jpg" },
-        new { Id = 4, Name = "Cà Phê Sữa Đá", Category = "Cà phê bột", Price = 85000, Stock = 80, Image = "/images/cafe4.jpg" },
-        new { Id = 5, Name = "Cà Phê Hòa Tan 3in1", Category = "Cà phê hòa tan", Price = 125000, Stock = 150, Image = "/images/cafe5.jpg" },
-        new { Id = 6, Name = "Cold Brew Concentrate", Category = "Cà phê hạt", Price = 220000, Stock = 25, Image = "/images/cafe6.jpg" },
-        new { Id = 7, Name = "Bình Giữ Nhiệt Inox 500ml", Category = "Bình giữ nhiệt", Price = 350000, Stock = 40, Image = "/images/binh-giu-nhiet.jpg" },
-        new { Id = 8, Name = "Ly Sứ Cao Cấp 300ml", Category = "Ly cà phê", Price = 120000, Stock = 80, Image = "/images/ly-su.jpg" },
-        new { Id = 9, Name = "Túi Cà Phê Drip 10 gói", Category = "Cà phê đóng gói", Price = 85000, Stock = 150, Image = "/images/drip-coffee.jpg" }
-    };
+    var categories = ViewBag.Categories as IEnumerable<CoffeeShop.Web.Models.Category>;
 }
 
 <div class="space-y-6">
+    <!-- Toast Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div id="successToast" class="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div id="errorToast" class="fixed top-4 right-4 z-50 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            @TempData["Error"]
+        </div>
+    }
+
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Quản lý Sản phẩm</h1>
-            <p class="text-gray-600 dark:text-gray-400 mt-1">Quản lý danh sách sản phẩm của cửa hàng</p>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Tổng cộng @Model.Count() sản phẩm</p>
         </div>
         <button onclick="openAddModal()" class="px-5 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium transition-colors flex items-center gap-2 shadow-lg shadow-amber-600/30">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,28 +34,6 @@
             </svg>
             Thêm sản phẩm
         </button>
-    </div>
-
-    <!-- Search & Filter -->
-    <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-gray-100 dark:border-gray-700">
-        <div class="flex flex-col md:flex-row gap-4">
-            <div class="flex-1 relative">
-                <input type="text" placeholder="Tìm kiếm sản phẩm..." 
-                       class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500 focus:border-transparent">
-                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-            </div>
-            <select class="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
-                <option value="">Tất cả danh mục</option>
-                <option value="1">Cà phê hạt</option>
-                <option value="2">Cà phê bột</option>
-                <option value="3">Cà phê hòa tan</option>
-                <option value="4">Bình giữ nhiệt</option>
-                <option value="5">Ly cà phê</option>
-                <option value="6">Cà phê đóng gói</option>
-            </select>
-        </div>
     </div>
 
     <!-- Products Table -->
@@ -65,16 +46,26 @@
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Danh mục</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Giá</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Tồn kho</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Trạng thái</th>
                         <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                    @foreach (var product in products)
+                    @foreach (var product in Model)
                     {
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-2xl">☕</div>
+                                <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-2xl overflow-hidden">
+                                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                    {
+                                        <img src="@product.ImageUrl" alt="@product.Name" class="w-full h-full object-cover"/>
+                                    }
+                                    else
+                                    {
+                                        <span>☕</span>
+                                    }
+                                </div>
                                 <div>
                                     <p class="font-semibold text-gray-900 dark:text-white">@product.Name</p>
                                     <p class="text-sm text-gray-500 dark:text-gray-400">ID: #@product.Id</p>
@@ -83,30 +74,44 @@
                         </td>
                         <td class="px-6 py-4">
                             <span class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
-                                @product.Category
+                                @product.CategoryName
                             </span>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="font-semibold text-gray-900 dark:text-white">@(product.Price.ToString("N0"))đ</span>
+                            <span class="font-semibold text-gray-900 dark:text-white">@product.Price.ToString("N0")đ</span>
+                            @if (product.OriginalPrice.HasValue && product.OriginalPrice > product.Price)
+                            {
+                                <span class="text-sm text-gray-400 line-through ml-2">@product.OriginalPrice.Value.ToString("N0")đ</span>
+                            }
                         </td>
                         <td class="px-6 py-4">
-                            @if (product.Stock > 50)
+                            @if (product.StockQuantity > 50)
                             {
                                 <span class="px-3 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
-                                    @product.Stock còn
+                                    @product.StockQuantity còn
                                 </span>
                             }
-                            else if (product.Stock > 20)
+                            else if (product.StockQuantity > 20)
                             {
                                 <span class="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400">
-                                    @product.Stock còn
+                                    @product.StockQuantity còn
                                 </span>
                             }
                             else
                             {
                                 <span class="px-3 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400">
-                                    @product.Stock còn
+                                    @product.StockQuantity còn
                                 </span>
+                            }
+                        </td>
+                        <td class="px-6 py-4">
+                            @if (product.IsActive)
+                            {
+                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">Hoạt động</span>
+                            }
+                            else
+                            {
+                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">Ẩn</span>
                             }
                         </td>
                         <td class="px-6 py-4">
@@ -116,7 +121,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
                                 </button>
-                                <button onclick="confirmDelete(@product.Id)" class="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors" title="Xóa">
+                                <button onclick="confirmDelete(@product.Id, '@product.Name.Replace("'", "\\'"))" class="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors" title="Xóa">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                     </svg>
@@ -128,102 +133,398 @@
                 </tbody>
             </table>
         </div>
-        
-        <!-- Pagination -->
-        <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
-            <p class="text-sm text-gray-600 dark:text-gray-400">Hiển thị 1-8 của 48 sản phẩm</p>
-            <div class="flex items-center gap-2">
-                <button class="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50" disabled>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
-                </button>
-                <button class="px-4 py-2 rounded-lg bg-amber-600 text-white font-medium">1</button>
-                <button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">2</button>
-                <button class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">3</button>
-                <button class="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
     </div>
 </div>
 
-<!-- Add/Edit Product Modal -->
-<div id="productModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-lg mx-4 shadow-2xl">
+<!-- Add Product Modal -->
+<div id="addModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-lg mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div class="p-6 border-b border-gray-100 dark:border-gray-700">
-            <h3 id="modalTitle" class="text-xl font-bold text-gray-900 dark:text-white">Thêm sản phẩm mới</h3>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white">Thêm sản phẩm mới</h3>
         </div>
-        <form class="p-6 space-y-4">
+        <form asp-action="CreateProduct" method="post" enctype="multipart/form-data" class="p-6 space-y-4">
+            @Html.AntiForgeryToken()
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tên sản phẩm</label>
-                <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tên sản phẩm *</label>
+                <input type="text" name="Name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Danh mục</label>
-                    <select class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
-                        <option>Cà phê hạt</option>
-                        <option>Cà phê bột</option>
-                        <option>Cà phê hòa tan</option>
-                        <option>Bình giữ nhiệt</option>
-                        <option>Ly cà phê</option>
-                        <option>Cà phê đóng gói</option>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Danh mục *</label>
+                    <select name="CategoryId" required class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                        @if (categories != null)
+                        {
+                            @foreach (var cat in categories)
+                            {
+                                <option value="@cat.Id">@cat.Name</option>
+                            }
+                        }
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Giá (VNĐ)</label>
-                    <input type="number" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Giá (VNĐ) *</label>
+                    <input type="number" name="Price" required class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Giá gốc</label>
+                    <input type="number" name="OriginalPrice" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số lượng tồn kho</label>
+                    <input type="number" name="StockQuantity" value="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
                 </div>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số lượng tồn kho</label>
-                <input type="number" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ảnh đại diện *</label>
+                <div class="flex items-center gap-4">
+                    <div id="addImagePreview" class="w-20 h-20 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-300 dark:border-gray-600">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <input type="file" name="imageFile" id="addImageFile" accept=".jpg,.jpeg,.png,.webp" onchange="previewImage(this, 'addImagePreview')" class="hidden">
+                        <label for="addImageFile" class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                            </svg>
+                            Chọn ảnh đại diện
+                        </label>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">JPG, PNG, WEBP (tối đa 5MB)</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ảnh phụ (Gallery)</label>
+                <div id="addGalleryPreview" class="flex flex-wrap gap-2 mb-2"></div>
+                <input type="file" name="galleryFiles" id="addGalleryFiles" accept=".jpg,.jpeg,.png,.webp" multiple onchange="previewGallery(this, 'addGalleryPreview')" class="hidden">
+                <label for="addGalleryFiles" class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Thêm ảnh phụ
+                </label>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Có thể chọn nhiều ảnh</p>
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mô tả</label>
-                <textarea rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 resize-none"></textarea>
+                <textarea name="Description" rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 resize-none"></textarea>
+            </div>
+            <div class="flex items-center gap-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="IsFeatured" value="true" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Sản phẩm nổi bật</span>
+                </label>
+            </div>
+            <div class="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
+                <button type="button" onclick="closeAddModal()" class="px-5 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Hủy
+                </button>
+                <button type="submit" class="px-5 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium transition-colors">
+                    Thêm sản phẩm
+                </button>
             </div>
         </form>
-        <div class="p-6 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
-            <button onclick="closeModal()" class="px-5 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                Hủy
-            </button>
-            <button class="px-5 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium transition-colors">
-                Lưu sản phẩm
-            </button>
+    </div>
+</div>
+
+<!-- Edit Product Modal -->
+<div id="editModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-lg mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-gray-100 dark:border-gray-700">
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white">Chỉnh sửa sản phẩm</h3>
+        </div>
+        <form asp-action="UpdateProduct" method="post" enctype="multipart/form-data" class="p-6 space-y-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" id="editId">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tên sản phẩm *</label>
+                <input type="text" name="Name" id="editName" required class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Danh mục *</label>
+                    <select name="CategoryId" id="editCategoryId" required class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                        @if (categories != null)
+                        {
+                            @foreach (var cat in categories)
+                            {
+                                <option value="@cat.Id">@cat.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Giá (VNĐ) *</label>
+                    <input type="number" name="Price" id="editPrice" required class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Giá gốc</label>
+                    <input type="number" name="OriginalPrice" id="editOriginalPrice" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Số lượng tồn kho</label>
+                    <input type="number" name="StockQuantity" id="editStockQuantity" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ảnh đại diện</label>
+                <div class="flex items-center gap-4">
+                    <div id="editImagePreview" class="w-20 h-20 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-300 dark:border-gray-600">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <input type="file" name="imageFile" id="editImageFile" accept=".jpg,.jpeg,.png,.webp" onchange="previewImage(this, 'editImagePreview')" class="hidden">
+                        <label for="editImageFile" class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                            </svg>
+                            Đổi ảnh đại diện
+                        </label>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Giữ nguyên nếu không thay đổi</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ảnh phụ (Gallery)</label>
+                <input type="hidden" name="existingImages" id="editExistingImages">
+                <div id="editGalleryPreview" class="flex flex-wrap gap-2 mb-2"></div>
+                <input type="file" name="galleryFiles" id="editGalleryFiles" accept=".jpg,.jpeg,.png,.webp" multiple onchange="previewGallery(this, 'editGalleryPreview', true)" class="hidden">
+                <label for="editGalleryFiles" class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Thêm ảnh phụ
+                </label>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mô tả</label>
+                <textarea name="Description" id="editDescription" rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 resize-none"></textarea>
+            </div>
+            <div class="flex items-center gap-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="IsFeatured" id="editIsFeatured" value="true" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Sản phẩm nổi bật</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="IsActive" id="editIsActive" value="true" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Hoạt động</span>
+                </label>
+            </div>
+            <div class="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
+                <button type="button" onclick="closeEditModal()" class="px-5 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Hủy
+                </button>
+                <button type="submit" class="px-5 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium transition-colors">
+                    Lưu thay đổi
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md mx-4 shadow-2xl">
+        <div class="p-6 text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                <svg class="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Xác nhận xóa</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Bạn có chắc chắn muốn xóa sản phẩm <strong id="deleteProductName"></strong>?</p>
+            <form asp-action="DeleteProduct" method="post" class="flex justify-center gap-3">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="deleteProductId">
+                <button type="button" onclick="closeDeleteModal()" class="px-5 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Hủy
+                </button>
+                <button type="submit" class="px-5 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium transition-colors">
+                    Xóa
+                </button>
+            </form>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        function openAddModal() {
-            document.getElementById('modalTitle').textContent = 'Thêm sản phẩm mới';
-            document.getElementById('productModal').classList.remove('hidden');
+        // Auto-hide toast messages
+        setTimeout(() => {
+            const successToast = document.getElementById('successToast');
+            const errorToast = document.getElementById('errorToast');
+            if (successToast) successToast.style.display = 'none';
+            if (errorToast) errorToast.style.display = 'none';
+        }, 3000);
+
+        // Track existing gallery images for edit form
+        let editExistingImages = [];
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.add('hidden');
+        }
+
+        async function openEditModal(id) {
+            try {
+                const response = await fetch(`/Admin/GetProduct?id=${id}`);
+                if (!response.ok) throw new Error('Product not found');
+                const product = await response.json();
+                
+                document.getElementById('editId').value = product.id;
+                document.getElementById('editName').value = product.name;
+                document.getElementById('editCategoryId').value = product.categoryId;
+                document.getElementById('editPrice').value = product.price;
+                document.getElementById('editOriginalPrice').value = product.originalPrice || '';
+                document.getElementById('editStockQuantity').value = product.stockQuantity;
+                document.getElementById('editDescription').value = product.description || '';
+                document.getElementById('editIsFeatured').checked = product.isFeatured;
+                document.getElementById('editIsActive').checked = product.isActive;
+                
+                // Show current main image preview
+                const previewDiv = document.getElementById('editImagePreview');
+                if (product.imageUrl) {
+                    previewDiv.innerHTML = `<img src="${product.imageUrl}" alt="Preview" class="w-full h-full object-cover">`;
+                } else {
+                    previewDiv.innerHTML = getPlaceholderSvg();
+                }
+                
+                // Show gallery images
+                editExistingImages = [];
+                const galleryPreview = document.getElementById('editGalleryPreview');
+                galleryPreview.innerHTML = '';
+                if (product.images) {
+                    try {
+                        const images = JSON.parse(product.images);
+                        editExistingImages = [...images];
+                        images.forEach((url, index) => {
+                            galleryPreview.appendChild(createGalleryThumb(url, index, true));
+                        });
+                    } catch (e) {}
+                }
+                updateExistingImagesInput();
+                
+                document.getElementById('editModal').classList.remove('hidden');
+            } catch (error) {
+                alert('Không thể tải thông tin sản phẩm!');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        function confirmDelete(id, name) {
+            document.getElementById('deleteProductId').value = id;
+            document.getElementById('deleteProductName').textContent = name;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        // Close modals when clicking outside
+        ['addModal', 'editModal', 'deleteModal'].forEach(modalId => {
+            document.getElementById(modalId).addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                }
+            });
+        });
+        
+        // Get placeholder SVG
+        function getPlaceholderSvg() {
+            return `<svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>`;
         }
         
-        function openEditModal(id) {
-            document.getElementById('modalTitle').textContent = 'Chỉnh sửa sản phẩm #' + id;
-            document.getElementById('productModal').classList.remove('hidden');
-        }
-        
-        function closeModal() {
-            document.getElementById('productModal').classList.add('hidden');
-        }
-        
-        function confirmDelete(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa sản phẩm #' + id + '?')) {
-                alert('Đã xóa sản phẩm (Demo)');
+        // Image preview function for main image
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="w-full h-full object-cover">`;
+                }
+                reader.readAsDataURL(input.files[0]);
             }
         }
         
-        // Close modal when clicking outside
-        document.getElementById('productModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
+        // Create gallery thumbnail with delete button
+        function createGalleryThumb(src, index, isExisting = false) {
+            const div = document.createElement('div');
+            div.className = 'relative w-16 h-16 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-600 group';
+            div.innerHTML = `
+                <img src="${src}" alt="Gallery ${index}" class="w-full h-full object-cover">
+                ${isExisting ? `
+                <button type="button" onclick="removeExistingImage(${index})" class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white rounded-bl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+                ` : ''}
+            `;
+            return div;
+        }
+        
+        // Preview gallery images (for new uploads)
+        function previewGallery(input, previewId, appendToExisting = false) {
+            const preview = document.getElementById(previewId);
+            
+            if (!appendToExisting) {
+                preview.innerHTML = '';
+            }
+            
+            if (input.files) {
+                Array.from(input.files).forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.className = 'relative w-16 h-16 rounded-lg overflow-hidden border-2 border-green-400 dark:border-green-600';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" alt="New ${index}" class="w-full h-full object-cover">
+                            <span class="absolute bottom-0 left-0 right-0 bg-green-500 text-white text-xs text-center">Mới</span>
+                        `;
+                        preview.appendChild(div);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+        
+        // Remove existing image from edit form
+        function removeExistingImage(index) {
+            editExistingImages.splice(index, 1);
+            updateExistingImagesInput();
+            refreshEditGalleryPreview();
+        }
+        
+        // Update hidden input with existing images JSON
+        function updateExistingImagesInput() {
+            document.getElementById('editExistingImages').value = JSON.stringify(editExistingImages);
+        }
+        
+        // Refresh edit gallery preview
+        function refreshEditGalleryPreview() {
+            const galleryPreview = document.getElementById('editGalleryPreview');
+            galleryPreview.innerHTML = '';
+            editExistingImages.forEach((url, index) => {
+                galleryPreview.appendChild(createGalleryThumb(url, index, true));
+            });
+        }
+        
+        // Reset add modal when opened
+        function openAddModal() {
+            const preview = document.getElementById('addImagePreview');
+            preview.innerHTML = getPlaceholderSvg();
+            document.getElementById('addImageFile').value = '';
+            document.getElementById('addGalleryFiles').value = '';
+            document.getElementById('addGalleryPreview').innerHTML = '';
+            document.getElementById('addModal').classList.remove('hidden');
+        }
     </script>
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using CoffeeShop.Web.Models;
 using CoffeeShop.Web.Services;
+using CoffeeShop.Web.Services.PaymentProcessing;
 
 namespace CoffeeShop.Web.Controllers
 {
@@ -10,15 +11,21 @@ namespace CoffeeShop.Web.Controllers
         private readonly ICartService _cartService;
         private readonly IOrderService _orderService;
         private readonly IPaymentService _paymentService;
+        private readonly IPaymentProcessorFactory _paymentFactory;
+        private readonly ILogger<CheckoutController> _logger;
 
         public CheckoutController(
             ICartService cartService,
             IOrderService orderService,
-            IPaymentService paymentService)
+            IPaymentService paymentService,
+            IPaymentProcessorFactory paymentFactory,
+            ILogger<CheckoutController> logger)
         {
             _cartService = cartService;
             _orderService = orderService;
             _paymentService = paymentService;
+            _paymentFactory = paymentFactory;
+            _logger = logger;
         }
 
         private int? GetCurrentUserId()
@@ -74,85 +81,155 @@ namespace CoffeeShop.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PlaceOrder(CheckoutViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                // Reload cart items
-                var userId = GetCurrentUserId();
-                var sessionId = userId.HasValue ? null : GetSessionId();
-                var cart = await _cartService.GetOrCreateCartAsync(userId, sessionId);
-                model.CartItems = cart.CartItems?.Select(ci => new CartItem
-                {
-                    Id = ci.Id,
-                    ProductId = ci.ProductId,
-                    Quantity = ci.Quantity,
-                    Product = ci.Product
-                }).ToList() ?? new List<CartItem>();
-
-                return View("Index", model);
-            }
+            _logger.LogInformation("=== PlaceOrder được gọi ===");
+            _logger.LogInformation("PaymentMethod: {PaymentMethod}", model.PaymentMethod);
+            _logger.LogInformation("FullName: {FullName}, Phone: {Phone}", model.FullName, model.Phone);
 
             var currentUserId = GetCurrentUserId();
             var currentSessionId = currentUserId.HasValue ? null : GetSessionId();
-            var currentCart = await _cartService.GetOrCreateCartAsync(currentUserId, currentSessionId);
-            var currentCartItems = currentCart.CartItems?.ToList() ?? new List<CartItem>();
 
-            if (currentCartItems.Count == 0)
+            try
             {
-                TempData["Error"] = "Giỏ hàng trống.";
-                return RedirectToAction("Index", "Cart");
+                // Log ModelState
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogWarning("❌ ModelState không hợp lệ!");
+                    foreach (var error in ModelState)
+                    {
+                        foreach (var e in error.Value.Errors)
+                        {
+                            _logger.LogWarning("  - Field: {Field}, Error: {Error}", error.Key, e.ErrorMessage);
+                        }
+                    }
+
+                    // Reload cart items
+                    var cart = await _cartService.GetOrCreateCartAsync(currentUserId, currentSessionId);
+                    model.CartItems = cart.CartItems?.Select(ci => new CartItem
+                    {
+                        Id = ci.Id,
+                        ProductId = ci.ProductId,
+                        Quantity = ci.Quantity,
+                        Product = ci.Product
+                    }).ToList() ?? new List<CartItem>();
+
+                    TempData["Error"] = "Vui lòng kiểm tra lại thông tin đặt hàng.";
+                    return View("Index", model);
+                }
+
+                _logger.LogInformation("✅ ModelState hợp lệ, tiếp tục xử lý...");
+
+                // ========================================
+                // Lấy payment processor từ factory
+                // ========================================
+                if (!_paymentFactory.IsSupported(model.PaymentMethod))
+                {
+                    TempData["Error"] = $"Phương thức thanh toán '{model.PaymentMethod}' không được hỗ trợ.";
+                    return RedirectToAction("Index");
+                }
+
+                var processor = _paymentFactory.GetProcessor(model.PaymentMethod);
+                var paymentStatus = processor.InitialPaymentStatus;
+                
+                _logger.LogInformation("Sử dụng processor: {Processor}, InitialStatus: {Status}", 
+                    processor.PaymentMethod, paymentStatus);
+
+                var currentCart = await _cartService.GetOrCreateCartAsync(currentUserId, currentSessionId);
+                var currentCartItems = currentCart.CartItems?.ToList() ?? new List<CartItem>();
+
+                if (currentCartItems.Count == 0)
+                {
+                    TempData["Error"] = "Giỏ hàng trống.";
+                    return RedirectToAction("Index", "Cart");
+                }
+
+                // Calculate totals
+                var subTotal = currentCartItems.Sum(ci => ci.TotalPrice);
+                var shippingFee = 30000m;
+                var totalAmount = subTotal + shippingFee;
+
+                // Create order with status from processor
+                var order = new Order
+                {
+                    UserId = currentUserId,
+                    CustomerName = model.FullName,
+                    CustomerPhone = model.Phone,
+                    CustomerEmail = model.Email,
+                    ShippingAddress = model.Address,
+                    SubTotal = subTotal,
+                    ShippingFee = shippingFee,
+                    Discount = 0,
+                    TotalAmount = totalAmount,
+                    PaymentMethod = model.PaymentMethod,
+                    PaymentStatus = paymentStatus,
+                    OrderStatus = "Pending",
+                    Note = model.Note
+                };
+
+                var orderDetails = currentCartItems.Select(ci => new OrderDetail
+                {
+                    ProductId = ci.ProductId,
+                    ProductName = ci.Product?.Name ?? "",
+                    UnitPrice = ci.Product?.Price ?? 0,
+                    Quantity = ci.Quantity,
+                    TotalPrice = ci.TotalPrice
+                }).ToList();
+
+                // Create order (with stock validation inside transaction)
+                var createdOrder = await _orderService.CreateAsync(order, orderDetails);
+
+                // Create payment record
+                var payment = new Payment
+                {
+                    OrderId = createdOrder.Id,
+                    Amount = totalAmount,
+                    PaymentMethod = model.PaymentMethod,
+                    Status = paymentStatus
+                };
+                await _paymentService.CreateAsync(payment);
+
+                // ========================================
+                // Xử lý thanh toán qua processor
+                // ========================================
+                var result = await processor.ProcessAsync(createdOrder, payment);
+
+                if (!result.Success)
+                {
+                    TempData["Error"] = result.ErrorMessage ?? "Đã có lỗi xảy ra khi xử lý thanh toán.";
+                    return RedirectToAction("Index");
+                }
+
+                // Nếu có redirect URL (MoMo, VNPay...), redirect đến đó
+                if (!string.IsNullOrEmpty(result.RedirectUrl))
+                {
+                    // Clear cart trước khi redirect
+                    await _cartService.ClearCartAsync(currentCart.Id);
+                    return Redirect(result.RedirectUrl);
+                }
+
+                // Không có redirect (COD) - success ngay
+                await _cartService.ClearCartAsync(currentCart.Id);
+
+                TempData["OrderSuccess"] = true;
+                TempData["OrderCode"] = createdOrder.OrderCode;
+                TempData["TotalAmount"] = totalAmount.ToString("N0");
+                TempData["PaymentMethod"] = model.PaymentMethod;
+
+                return RedirectToAction("Success");
             }
-
-            // Calculate totals
-            var subTotal = currentCartItems.Sum(ci => ci.TotalPrice);
-            var shippingFee = 30000m;
-            var totalAmount = subTotal + shippingFee;
-
-            // Create order
-            var order = new Order
+            catch (InvalidOperationException ex)
             {
-                UserId = currentUserId,
-                CustomerName = model.FullName,
-                CustomerPhone = model.Phone,
-                CustomerEmail = model.Email,
-                ShippingAddress = model.Address,
-                SubTotal = subTotal,
-                ShippingFee = shippingFee,
-                Discount = 0,
-                TotalAmount = totalAmount,
-                PaymentMethod = model.PaymentMethod,
-                PaymentStatus = "Pending",
-                OrderStatus = "New",
-                Note = model.Note
-            };
-
-            var orderDetails = currentCartItems.Select(ci => new OrderDetail
+                // Stock validation error
+                _logger.LogWarning("❌ InvalidOperationException: {Message}", ex.Message);
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
             {
-                ProductId = ci.ProductId,
-                ProductName = ci.Product?.Name ?? "",
-                UnitPrice = ci.Product?.Price ?? 0,
-                Quantity = ci.Quantity,
-                TotalPrice = ci.TotalPrice
-            }).ToList();
-
-            var createdOrder = await _orderService.CreateAsync(order, orderDetails);
-
-            // Create payment record
-            var payment = new Payment
-            {
-                OrderId = createdOrder.Id,
-                Amount = totalAmount,
-                PaymentMethod = model.PaymentMethod,
-                Status = "Pending"
-            };
-            await _paymentService.CreateAsync(payment);
-
-            // Clear cart
-            await _cartService.ClearCartAsync(currentCart.Id);
-
-            TempData["OrderSuccess"] = true;
-            TempData["OrderId"] = createdOrder.OrderCode;
-
-            return RedirectToAction("Success");
+                // Log chi tiết exception để debug
+                _logger.LogError(ex, "❌ Exception nghiêm trọng trong PlaceOrder");
+                TempData["Error"] = "Đã có lỗi xảy ra khi đặt hàng. Vui lòng thử lại.";
+                return RedirectToAction("Index");
+            }
         }
 
         public IActionResult Success()
@@ -162,7 +239,9 @@ namespace CoffeeShop.Web.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            ViewBag.OrderId = TempData["OrderId"];
+            ViewBag.OrderCode = TempData["OrderCode"];
+            ViewBag.TotalAmount = TempData["TotalAmount"];
+            ViewBag.PaymentMethod = TempData["PaymentMethod"];
             return View();
         }
     }

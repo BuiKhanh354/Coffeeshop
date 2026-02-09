@@ -11,6 +11,7 @@ namespace CoffeeShop.Web.Services
         Task<Payment?> GetByTransactionIdAsync(string transactionId);
         Task<Payment> CreateAsync(Payment payment);
         Task<Payment> UpdateStatusAsync(int paymentId, string status, string? transactionId = null);
+        Task UpdateStatusByOrderIdAsync(int orderId, string status);
         Task<IEnumerable<Payment>> GetByDateRangeAsync(DateTime startDate, DateTime endDate);
     }
 
@@ -77,6 +78,22 @@ namespace CoffeeShop.Web.Services
                 .Where(p => p.CreatedAt >= startDate && p.CreatedAt <= endDate)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
+        }
+
+        public async Task UpdateStatusByOrderIdAsync(int orderId, string status)
+        {
+            var payments = await _context.Payments
+                .Where(p => p.OrderId == orderId)
+                .ToListAsync();
+
+            foreach (var payment in payments)
+            {
+                payment.Status = status;
+                if (status == "Paid")
+                    payment.PaidAt = DateTime.Now;
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

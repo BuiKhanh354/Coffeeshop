@@ -41,7 +41,7 @@
                 <div class="lg:col-span-2 space-y-4" id="cartItems">
                     @foreach (var item in Model)
                     {
-                        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row gap-6" id="item-@item.ProductId">
+                        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row gap-6" id="item-@item.Id">
                             <!-- Product Image -->
                             <div class="w-24 h-24 flex-shrink-0 bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl flex items-center justify-center">
                                 <span class="text-4xl">☕</span>
@@ -51,7 +51,7 @@
                             <div class="flex-1">
                                 <div class="flex justify-between items-start mb-2">
                                     <h3 class="text-lg font-bold text-gray-900 dark:text-white">@item.ProductName</h3>
-                                    <button onclick="removeItem(@item.ProductId)" class="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-500 transition-colors">
+                                    <button onclick="removeItem(@item.Id)" class="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-500 transition-colors">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
@@ -62,13 +62,13 @@
                                 <div class="flex justify-between items-center">
                                     <!-- Quantity -->
                                     <div class="flex items-center gap-0 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-                                        <button onclick="updateQuantity(@item.ProductId, @(item.Quantity - 1))" class="w-10 h-10 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-lg font-bold text-gray-700 dark:text-gray-300">−</button>
-                                        <span class="w-12 h-10 flex items-center justify-center text-gray-900 dark:text-white font-bold" id="qty-@item.ProductId">@item.Quantity</span>
-                                        <button onclick="updateQuantity(@item.ProductId, @(item.Quantity + 1))" class="w-10 h-10 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-lg font-bold text-gray-700 dark:text-gray-300">+</button>
+                                        <button onclick="updateQuantity(@item.Id, @(item.Quantity - 1))" class="w-10 h-10 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-lg font-bold text-gray-700 dark:text-gray-300">−</button>
+                                        <span class="w-12 h-10 flex items-center justify-center text-gray-900 dark:text-white font-bold" id="qty-@item.Id">@item.Quantity</span>
+                                        <button onclick="updateQuantity(@item.Id, @(item.Quantity + 1))" class="w-10 h-10 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-lg font-bold text-gray-700 dark:text-gray-300">+</button>
                                     </div>
                                     
                                     <!-- Total -->
-                                    <span class="text-xl font-bold text-gray-900 dark:text-white" id="total-@item.ProductId">
+                                    <span class="text-xl font-bold text-gray-900 dark:text-white" id="total-@item.Id">
                                         @item.TotalPrice.ToString("N0")đ
                                     </span>
                                 </div>
@@ -115,21 +115,21 @@
 
 @section Scripts {
 <script>
-    function updateQuantity(productId, quantity) {
+    function updateQuantity(cartItemId, quantity) {
         if (quantity < 1) {
-            removeItem(productId);
+            removeItem(cartItemId);
             return;
         }
 
         fetch('/Cart/UpdateQuantity', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `productId=${productId}&quantity=${quantity}`
+            body: `cartItemId=${cartItemId}&quantity=${quantity}`
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                document.getElementById(`qty-${productId}`).textContent = quantity;
+                document.getElementById(`qty-${cartItemId}`).textContent = quantity;
                 document.getElementById('subTotal').textContent = formatNumber(data.subTotal) + 'đ';
                 document.getElementById('grandTotal').textContent = formatNumber(data.total) + 'đ';
                 updateCartCount(data.cartCount);
@@ -141,16 +141,16 @@
         .catch(error => console.error('Error:', error));
     }
 
-    function removeItem(productId) {
+    function removeItem(cartItemId) {
         fetch('/Cart/Remove', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `productId=${productId}`
+            body: `cartItemId=${cartItemId}`
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                const item = document.getElementById(`item-${productId}`);
+                const item = document.getElementById(`item-${cartItemId}`);
                 item.style.opacity = '0';
                 item.style.transform = 'translateX(-20px)';
                 setTimeout(() => {

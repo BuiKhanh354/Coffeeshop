@@ -1,35 +1,24 @@
+@model IEnumerable<CoffeeShop.Web.Models.Order>
 @{
     ViewData["Title"] = "Lịch sử đơn hàng";
-}
-
-@* Demo User Data *@
-@{
     var userEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "user@coffeeshop.vn";
     var userName = User.Identity?.Name ?? "Khách hàng";
-    
-    var orders = new[] {
-        new { Id = "DH001", Date = "26/01/2026", Total = 450000, Status = "shipping", Items = 3 },
-        new { Id = "DH002", Date = "20/01/2026", Total = 320000, Status = "completed", Items = 2 },
-        new { Id = "DH003", Date = "15/01/2026", Total = 185000, Status = "completed", Items = 1 },
-        new { Id = "DH004", Date = "10/01/2026", Total = 295000, Status = "completed", Items = 2 },
-        new { Id = "DH005", Date = "05/01/2026", Total = 550000, Status = "cancelled", Items = 4 }
-    };
 
     string GetStatusText(string status) => status switch {
-        "pending" => "Chờ xác nhận",
-        "processing" => "Đang chuẩn bị",
-        "shipping" => "Đang giao",
-        "completed" => "Hoàn thành",
-        "cancelled" => "Đã hủy",
+        "Pending" => "Chờ xác nhận",
+        "Processing" => "Đang chuẩn bị",
+        "Shipping" => "Đang giao",
+        "Completed" => "Hoàn thành",
+        "Cancelled" => "Đã hủy",
         _ => status
     };
 
     string GetStatusColor(string status) => status switch {
-        "pending" => "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400",
-        "processing" => "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400",
-        "shipping" => "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
-        "completed" => "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400",
-        "cancelled" => "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400",
+        "Pending" => "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400",
+        "Processing" => "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400",
+        "Shipping" => "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
+        "Completed" => "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400",
+        "Cancelled" => "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400",
         _ => "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
     };
 }
@@ -96,8 +85,30 @@
 
             <!-- Main Content -->
             <div class="lg:col-span-3 space-y-4">
-                @foreach (var order in orders)
+                @if (Model == null || !Model.Any())
                 {
+                <!-- Empty State -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-12 shadow-lg border border-gray-100 dark:border-gray-700 text-center">
+                    <div class="w-24 h-24 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-12 h-12 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Chưa có đơn hàng nào</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-6">Bạn chưa có đơn hàng nào. Hãy khám phá các sản phẩm của chúng tôi!</p>
+                    <a href="/Products" class="inline-flex items-center gap-2 px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-xl transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        Mua sắm ngay
+                    </a>
+                </div>
+                }
+                else
+                {
+                @foreach (var order in Model)
+                {
+                    var itemCount = order.OrderDetails?.Sum(od => od.Quantity) ?? 0;
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                         <div class="flex items-center gap-4">
@@ -108,11 +119,11 @@
                             </div>
                             <div>
                                 <h3 class="font-bold text-gray-900 dark:text-white">Đơn hàng #@order.Id</h3>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Ngày đặt: @order.Date</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Ngày đặt: @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
                             </div>
                         </div>
-                        <span class="px-4 py-2 rounded-full text-sm font-medium @GetStatusColor(order.Status)">
-                            @GetStatusText(order.Status)
+                        <span class="px-4 py-2 rounded-full text-sm font-medium @GetStatusColor(order.OrderStatus)">
+                            @GetStatusText(order.OrderStatus)
                         </span>
                     </div>
                     
@@ -120,33 +131,28 @@
                         <div class="flex items-center gap-6">
                             <div>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">Số sản phẩm</p>
-                                <p class="font-semibold text-gray-900 dark:text-white">@order.Items sản phẩm</p>
+                                <p class="font-semibold text-gray-900 dark:text-white">@itemCount sản phẩm</p>
                             </div>
                             <div>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">Tổng tiền</p>
-                                <p class="font-bold text-amber-600 dark:text-amber-400">@(order.Total.ToString("N0"))đ</p>
+                                <p class="font-bold text-amber-600 dark:text-amber-400">@(order.TotalAmount.ToString("N0"))đ</p>
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="viewOrderDetail('@order.Id')" class="px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
+                            <button onclick="viewOrderDetail(@order.Id)" class="px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
                                 Xem chi tiết
                             </button>
-                            @if (order.Status == "completed")
+                            @if (order.OrderStatus == "Completed")
                             {
-                            <button class="px-4 py-2 rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors text-sm font-medium">
+                            <a href="/Products" class="px-4 py-2 rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors text-sm font-medium">
                                 Mua lại
-                            </button>
+                            </a>
                             }
                         </div>
                     </div>
                 </div>
                 }
-
-                <!-- Pagination -->
-                <div class="flex justify-center gap-2 pt-4">
-                    <button class="px-4 py-2 rounded-lg bg-amber-600 text-white font-medium">1</button>
-                    <button class="px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">2</button>
-                </div>
+                }
             </div>
         </div>
     </div>
@@ -163,58 +169,10 @@
                 </svg>
             </button>
         </div>
-        <div class="p-6 space-y-6">
-            <!-- Order Items -->
-            <div>
-                <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Sản phẩm đã đặt</p>
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-xl">☕</div>
-                            <div>
-                                <p class="font-medium text-gray-900 dark:text-white">Espresso Arabica</p>
-                                <p class="text-sm text-gray-500">x2 - 185,000đ/sp</p>
-                            </div>
-                        </div>
-                        <span class="font-semibold text-gray-900 dark:text-white">370,000đ</span>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-xl">☕</div>
-                            <div>
-                                <p class="font-medium text-gray-900 dark:text-white">Cà Phê Phin</p>
-                                <p class="text-sm text-gray-500">x1 - 55,000đ/sp</p>
-                            </div>
-                        </div>
-                        <span class="font-semibold text-gray-900 dark:text-white">55,000đ</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Shipping Info -->
-            <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
-                <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Thông tin giao hàng</p>
-                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 space-y-2">
-                    <p class="text-gray-900 dark:text-white font-medium">Nguyễn Văn A</p>
-                    <p class="text-gray-600 dark:text-gray-400">0987654321</p>
-                    <p class="text-gray-600 dark:text-gray-400">123 Nguyễn Huệ, Quận 1, TP.HCM</p>
-                </div>
-            </div>
-            
-            <!-- Total -->
-            <div class="border-t border-gray-100 dark:border-gray-700 pt-4">
-                <div class="flex justify-between text-sm mb-2">
-                    <span class="text-gray-500">Tạm tính</span>
-                    <span class="text-gray-900 dark:text-white">425,000đ</span>
-                </div>
-                <div class="flex justify-between text-sm mb-2">
-                    <span class="text-gray-500">Phí vận chuyển</span>
-                    <span class="text-gray-900 dark:text-white">25,000đ</span>
-                </div>
-                <div class="flex justify-between font-bold text-lg pt-2 border-t border-gray-100 dark:border-gray-700">
-                    <span class="text-gray-900 dark:text-white">Tổng cộng</span>
-                    <span class="text-amber-600">450,000đ</span>
-                </div>
+        <div id="modalContent" class="p-6 space-y-6">
+            <div class="text-center py-8">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600 mx-auto"></div>
+                <p class="text-gray-500 mt-2">Đang tải...</p>
             </div>
         </div>
     </div>
@@ -222,9 +180,67 @@
 
 @section Scripts {
     <script>
-        function viewOrderDetail(orderId) {
+        async function viewOrderDetail(orderId) {
             document.getElementById('modalTitle').textContent = 'Chi tiết đơn hàng #' + orderId;
             document.getElementById('orderDetailModal').classList.remove('hidden');
+            
+            // Fetch order details
+            try {
+                const response = await fetch(`/Account/GetOrderDetail?id=${orderId}`);
+                if (!response.ok) throw new Error('Failed to load');
+                const order = await response.json();
+                
+                let itemsHtml = '';
+                if (order.orderDetails && order.orderDetails.length > 0) {
+                    for (const item of order.orderDetails) {
+                        itemsHtml += `
+                            <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-xl">☕</div>
+                                    <div>
+                                        <p class="font-medium text-gray-900 dark:text-white">${item.productName}</p>
+                                        <p class="text-sm text-gray-500">x${item.quantity} - ${item.unitPrice.toLocaleString()}đ/sp</p>
+                                    </div>
+                                </div>
+                                <span class="font-semibold text-gray-900 dark:text-white">${item.totalPrice.toLocaleString()}đ</span>
+                            </div>
+                        `;
+                    }
+                }
+                
+                document.getElementById('modalContent').innerHTML = `
+                    <div>
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Sản phẩm đã đặt</p>
+                        <div class="space-y-3">${itemsHtml}</div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Thông tin giao hàng</p>
+                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 space-y-2">
+                            <p class="text-gray-900 dark:text-white font-medium">${order.shippingName || 'N/A'}</p>
+                            <p class="text-gray-600 dark:text-gray-400">${order.shippingPhone || 'N/A'}</p>
+                            <p class="text-gray-600 dark:text-gray-400">${order.shippingAddress || 'N/A'}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-gray-100 dark:border-gray-700 pt-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-500">Phương thức thanh toán</span>
+                            <span class="text-gray-900 dark:text-white">${order.paymentMethod || 'N/A'}</span>
+                        </div>
+                        <div class="flex justify-between font-bold text-lg pt-2 border-t border-gray-100 dark:border-gray-700">
+                            <span class="text-gray-900 dark:text-white">Tổng cộng</span>
+                            <span class="text-amber-600">${order.totalAmount.toLocaleString()}đ</span>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('modalContent').innerHTML = `
+                    <div class="text-center py-8">
+                        <p class="text-red-500">Không thể tải thông tin đơn hàng!</p>
+                    </div>
+                `;
+            }
         }
         
         function closeModal() {

@@ -1,0 +1,262 @@
+@{
+    ViewData["Title"] = "Báo cáo";
+    Layout = "_AdminLayout";
+    
+    var totalRevenue = ViewBag.TotalRevenue as decimal? ?? 0;
+    var totalOrders = ViewBag.TotalOrders as int? ?? 0;
+    var averageOrderValue = ViewBag.AverageOrderValue as decimal? ?? 0;
+    var newCustomers = ViewBag.NewCustomers as int? ?? 0;
+    var revenueGrowth = ViewBag.RevenueGrowth as double? ?? 0;
+    var orderGrowth = ViewBag.OrderGrowth as double? ?? 0;
+    var orderStatusCounts = ViewBag.OrderStatusCounts as Dictionary<string, int> ?? new Dictionary<string, int>();
+    var topProducts = ViewBag.TopProducts as IEnumerable<(string ProductName, int Sold, decimal Revenue)> ?? Enumerable.Empty<(string, int, decimal)>();
+    
+    // Tính tổng doanh thu để tính % cho từng sản phẩm
+    var totalProductRevenue = (double)topProducts.Sum(p => p.Revenue);
+}
+
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Báo cáo</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Thống kê và phân tích dữ liệu</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="/Admin/ExportExcel?startDate=@ViewBag.StartDate&endDate=@ViewBag.EndDate" 
+               class="px-4 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                Xuất Excel
+            </a>
+            <a href="/Admin/ExportPdf?startDate=@ViewBag.StartDate&endDate=@ViewBag.EndDate" 
+               class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Xuất PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- Date Range Filter -->
+    <form method="get" action="/Admin/Reports" class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-gray-100 dark:border-gray-700">
+        <div class="flex flex-col md:flex-row gap-4 items-end">
+            <div class="flex-1 grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Từ ngày</label>
+                    <input type="date" name="startDate" value="@ViewBag.StartDate" class="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Đến ngày</label>
+                    <input type="date" name="endDate" value="@ViewBag.EndDate" class="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500">
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium transition-colors">
+                    Áp dụng
+                </button>
+                <a href="/Admin/Reports" class="px-4 py-2 rounded-xl bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                    Reset
+                </a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Total Revenue -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@totalRevenue.ToString("N0")đ</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Tổng doanh thu</p>
+            @if (revenueGrowth != 0)
+            {
+                <p class="@(revenueGrowth > 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400") text-xs mt-2 flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="@(revenueGrowth > 0 ? "M5 10l7-7m0 0l7 7m-7-7v18" : "M19 14l-7 7m0 0l-7-7m7 7V3")"/>
+                    </svg>
+                    @(revenueGrowth > 0 ? "+" : "")@revenueGrowth.ToString("F1")% so với tháng trước
+                </p>
+            }
+        </div>
+
+        <!-- Total Orders -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@totalOrders</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Tổng đơn hàng</p>
+            @if (orderGrowth != 0)
+            {
+                <p class="@(orderGrowth > 0 ? "text-blue-600 dark:text-blue-400" : "text-red-600 dark:text-red-400") text-xs mt-2 flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="@(orderGrowth > 0 ? "M5 10l7-7m0 0l7 7m-7-7v18" : "M19 14l-7 7m0 0l-7-7m7 7V3")"/>
+                    </svg>
+                    @(orderGrowth > 0 ? "+" : "")@orderGrowth.ToString("F1")% so với tháng trước
+                </p>
+            }
+        </div>
+
+        <!-- Average Order Value -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@averageOrderValue.ToString("N0")đ</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Giá trị đơn trung bình</p>
+        </div>
+
+        <!-- Total Customers -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@newCustomers</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Khách hàng mới</p>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Revenue Chart -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Doanh thu theo tháng</h3>
+            <div class="h-64 flex items-center justify-center border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-xl">
+                <div class="text-center">
+                    <svg class="w-16 h-16 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    <p class="text-gray-500 dark:text-gray-400">Biểu đồ doanh thu</p>
+                    <p class="text-sm text-gray-400">(Có thể tích hợp Chart.js hoặc thư viện khác)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Chart -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Đơn hàng theo trạng thái</h3>
+            <div class="space-y-3">
+                @{
+                    var statusLabels = new Dictionary<string, string>
+                    {
+                        { "New", "Mới" },
+                        { "Pending", "Chờ xử lý" },
+                        { "Processing", "Đang xử lý" },
+                        { "Shipping", "Đang giao" },
+                        { "Delivered", "Đã giao" },
+                        { "Cancelled", "Đã hủy" }
+                    };
+                    var statusColors = new Dictionary<string, string>
+                    {
+                        { "New", "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" },
+                        { "Pending", "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400" },
+                        { "Processing", "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400" },
+                        { "Shipping", "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400" },
+                        { "Delivered", "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400" },
+                        { "Cancelled", "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400" }
+                    };
+                    var totalStatusCount = orderStatusCounts.Values.Sum();
+                }
+                @foreach (var status in orderStatusCounts)
+                {
+                    var label = statusLabels.ContainsKey(status.Key) ? statusLabels[status.Key] : status.Key;
+                    var color = statusColors.ContainsKey(status.Key) ? statusColors[status.Key] : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300";
+                    var percent = totalStatusCount > 0 ? (status.Value * 100.0 / totalStatusCount) : 0;
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full text-xs font-medium @color">@label</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-lg font-bold text-gray-900 dark:text-white">@status.Value</span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400 w-12 text-right">@percent.ToString("F1")%</span>
+                        </div>
+                    </div>
+                }
+                @if (orderStatusCounts.Count == 0)
+                {
+                    <p class="text-center text-gray-500 dark:text-gray-400 py-8">Chưa có dữ liệu</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Products Table -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div class="p-6 border-b border-gray-100 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Sản phẩm bán chạy</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 dark:bg-gray-700/50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">STT</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Tên sản phẩm</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Số lượng bán</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Doanh thu</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Tỷ lệ</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                    @if (topProducts.Any())
+                    {
+                        @foreach (var (product, index) in topProducts.Select((p, i) => (p, i)))
+                        {
+                            var percent = totalProductRevenue > 0 ? ((double)product.Revenue * 100.0 / totalProductRevenue) : 0;
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                                <td class="px-6 py-4">
+                                    <span class="font-semibold text-gray-900 dark:text-white">@(index + 1)</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="font-medium text-gray-900 dark:text-white">@product.ProductName</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="text-gray-600 dark:text-gray-400">@product.Sold</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="font-semibold text-gray-900 dark:text-white">@product.Revenue.ToString("N0")đ</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                            <div class="bg-amber-600 h-2 rounded-full" style="width: @percent.ToString("F1")%"></div>
+                                        </div>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400 w-12 text-right">@percent.ToString("F1")%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                Chưa có dữ liệu sản phẩm bán chạy trong khoảng thời gian này
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

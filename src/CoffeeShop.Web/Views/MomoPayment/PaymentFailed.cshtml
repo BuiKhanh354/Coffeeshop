@@ -1,0 +1,68 @@
+@{
+    ViewData["Title"] = "Thanh toán không thành công";
+}
+
+<!-- Payment Failed Page -->
+<section class="pt-24 pb-16 min-h-screen bg-gradient-to-b from-red-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div class="max-w-2xl mx-auto px-6 text-center">
+        <!-- Error Icon -->
+        <div class="mb-8">
+            <div class="w-24 h-24 mx-auto rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                <svg class="w-12 h-12 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Thanh toán <span class="text-red-600 dark:text-red-400">không thành công</span>
+        </h1>
+        
+        @if (TempData["Error"] != null)
+        {
+            <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
+                @TempData["Error"]
+            </p>
+        }
+        else
+        {
+            <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
+                Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại hoặc chọn phương thức thanh toán khác.
+            </p>
+        }
+
+        @if (TempData["OrderCode"] != null)
+        {
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 mb-8">
+                <p class="text-gray-600 dark:text-gray-400 mb-2">Mã đơn hàng của bạn</p>
+                <p class="text-2xl font-bold text-amber-600 dark:text-amber-400">@TempData["OrderCode"]</p>
+                <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">
+                    Đơn hàng đã được tạo nhưng chưa thanh toán
+                </p>
+            </div>
+        }
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/Checkout" 
+               class="px-8 py-4 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold text-lg hover:from-amber-700 hover:to-orange-700 transition-all duration-300 shadow-lg shadow-amber-500/25">
+                Thử lại thanh toán
+            </a>
+            <a href="/Products" 
+               class="px-8 py-4 rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold text-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300">
+                Tiếp tục mua sắm
+            </a>
+        </div>
+
+        <!-- Help Section -->
+        <div class="mt-12 p-6 bg-gray-100 dark:bg-gray-700/50 rounded-2xl">
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-3">Cần hỗ trợ?</h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm">
+                Nếu bạn gặp vấn đề với thanh toán, vui lòng liên hệ với chúng tôi qua hotline 
+                <a href="tel:1900636652" class="text-amber-600 dark:text-amber-400 font-semibold">1900 636 652</a>
+                hoặc email <a href="mailto:support@coffeeshop.vn" class="text-amber-600 dark:text-amber-400 font-semibold">support@coffeeshop.vn</a>
+            </p>
+        </div>
+    </div>
+</section>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi" class="scroll-smooth">
 
 <head>
@@ -390,43 +390,115 @@
             }
         }
 
+        // Chat history for context (user/model pairs)
+        let chatHistory = [];
+
         function sendMessage(e) {
             e.preventDefault();
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
-            
             if (!message) return;
-            
+
             addUserMessage(message);
             input.value = '';
-            
-            // Simulate AI response (replace with actual AI integration)
-            setTimeout(() => {
-                addBotMessage('Cảm ơn bạn đã liên hệ! Đây là phản hồi tự động. Để tích hợp AI thực sự, bạn có thể kết nối với API của ChatGPT, Gemini hoặc các dịch vụ AI khác.');
-            }, 1000);
+            chatHistory.push({ role: 'user', text: message });
+
+            const container = document.getElementById('chatMessages');
+            const loadingId = 'chat-loading-' + Date.now();
+            addBotMessageLoading(container, loadingId);
+
+            const submitBtn = document.querySelector('#chatForm button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
+            fetch('/Chatbot/SendMessage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message, history: chatHistory.slice(0, -1) })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    removeBotMessageLoading(loadingId);
+                    if (data.success && data.message) {
+                        addBotMessage(data.message);
+                        chatHistory.push({ role: 'model', text: data.message });
+                    } else {
+                        addBotMessage(data.error || 'Đã xảy ra lỗi. Vui lòng thử lại.');
+                    }
+                })
+                .catch(() => {
+                    removeBotMessageLoading(loadingId);
+                    addBotMessage('Không thể kết nối. Kiểm tra API key Gemini trong appsettings hoặc thử lại sau.');
+                })
+                .finally(() => {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    }
+                });
         }
 
         function sendQuickReply(text) {
             addUserMessage(text);
-            
-            // Simulate AI response based on quick reply
-            setTimeout(() => {
-                let response = '';
-                switch(text) {
-                    case 'Menu hôm nay':
-                        response = '📋 Menu hôm nay có: Cappuccino (45K), Latte (50K), Espresso (35K), Matcha Latte (55K) và nhiều món khác. Xem chi tiết tại trang Sản phẩm nhé!';
-                        break;
-                    case 'Khuyến mãi':
-                        response = '🎉 Khuyến mãi HOT: Mua 2 tặng 1 cho tất cả đồ uống! Áp dụng từ 7h-9h sáng và 14h-16h chiều.';
-                        break;
-                    case 'Đặt bàn':
-                        response = '🪑 Để đặt bàn, vui lòng gọi hotline 0123 456 789 hoặc đến trực tiếp cửa hàng. Chúng tôi mở cửa từ 7h-22h hàng ngày.';
-                        break;
-                    default:
-                        response = 'Cảm ơn bạn! Tôi sẽ hỗ trợ bạn ngay.';
-                }
-                addBotMessage(response);
-            }, 800);
+            chatHistory.push({ role: 'user', text: text });
+
+            const container = document.getElementById('chatMessages');
+            const loadingId = 'chat-loading-' + Date.now();
+            addBotMessageLoading(container, loadingId);
+
+            const submitBtn = document.querySelector('#chatForm button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
+            fetch('/Chatbot/SendMessage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text, history: chatHistory.slice(0, -1) })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    removeBotMessageLoading(loadingId);
+                    if (data.success && data.message) {
+                        addBotMessage(data.message);
+                        chatHistory.push({ role: 'model', text: data.message });
+                    } else {
+                        addBotMessage(data.error || 'Đã xảy ra lỗi. Vui lòng thử lại.');
+                    }
+                })
+                .catch(() => {
+                    removeBotMessageLoading(loadingId);
+                    addBotMessage('Không thể kết nối. Kiểm tra API key Gemini hoặc thử lại sau.');
+                })
+                .finally(() => {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    }
+                });
+        }
+
+        function addBotMessageLoading(container, id) {
+            const html = `
+                <div id="${id}" class="flex gap-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span class="text-sm">🤖</span>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl rounded-tl-none p-3 shadow-sm max-w-[80%]">
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Đang trả lời...</p>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function removeBotMessageLoading(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
         }
 
         function addUserMessage(text) {

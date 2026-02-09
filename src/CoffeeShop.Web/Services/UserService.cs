@@ -16,6 +16,7 @@ namespace CoffeeShop.Web.Services
         Task<IEnumerable<User>> GetAllAsync();
         Task<bool> UsernameExistsAsync(string username);
         Task<bool> EmailExistsAsync(string email);
+        Task<int> GetCustomerCountAsync();
     }
 
     public class UserService : IUserService
@@ -177,5 +178,11 @@ namespace CoffeeShop.Web.Services
                    hash.StartsWith("$2b$") || 
                    hash.StartsWith("$2y$");
         }
+
+        public async Task<int> GetCustomerCountAsync()
+        {
+            return await _context.Users.CountAsync(u => u.Role == "Customer");
+        }
     }
 }
+

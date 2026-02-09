@@ -18,6 +18,11 @@ namespace CoffeeShop.Web.Services
         Task DeleteAsync(int id);
         Task IncrementViewCountAsync(int id);
         Task<(IEnumerable<Product> Products, int TotalCount)> GetPagedAsync(int page, int pageSize, int? categoryId = null, string? search = null);
+        Task<int> GetTotalProductCountAsync();
+        
+        // Stock management
+        Task<bool> ValidateStockAsync(IEnumerable<(int ProductId, int Quantity)> items);
+        Task UpdateStockAsync(int productId, int quantityChange);
     }
 
     public class ProductService : IProductService
@@ -191,5 +196,41 @@ namespace CoffeeShop.Web.Services
                 .Replace("ư", "u").Replace("ú", "u").Replace("ù", "u").Replace("ủ", "u").Replace("ũ", "u").Replace("ụ", "u")
                 .Replace("ý", "y").Replace("ỳ", "y").Replace("ỷ", "y").Replace("ỹ", "y").Replace("ỵ", "y");
         }
+
+        public async Task<int> GetTotalProductCountAsync()
+        {
+            return await _context.Products.CountAsync(p => p.IsActive);
+        }
+
+        /// <summary>
+        /// Validate if all items have sufficient stock
+        /// </summary>
+        public async Task<bool> ValidateStockAsync(IEnumerable<(int ProductId, int Quantity)> items)
+        {
+            foreach (var (productId, quantity) in items)
+            {
+                var product = await _context.Products.FindAsync(productId);
+                if (product == null || product.StockQuantity < quantity)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Update product stock (negative to decrease, positive to increase)
+        /// </summary>
+        public async Task UpdateStockAsync(int productId, int quantityChange)
+        {
+            var product = await _context.Products.FindAsync(productId);
+            if (product != null)
+            {
+                product.StockQuantity += quantityChange;
+                if (product.StockQuantity < 0) product.StockQuantity = 0;
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
+
