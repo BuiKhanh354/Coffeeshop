@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using CoffeeShop.Web.Services;
 using CoffeeShop.Web.Models;
+using CoffeeShop.Web.Data;
 using OfficeOpenXml;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShop.Web.Controllers
 {
@@ -19,6 +21,7 @@ namespace CoffeeShop.Web.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IPaymentService _paymentService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly CoffeeShopDbContext _context;
 
         public AdminController(
             IOrderService orderService,
@@ -26,7 +29,8 @@ namespace CoffeeShop.Web.Controllers
             IProductService productService,
             ICategoryService categoryService,
             IPaymentService paymentService,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            CoffeeShopDbContext context)
         {
             _orderService = orderService;
             _userService = userService;
@@ -34,6 +38,7 @@ namespace CoffeeShop.Web.Controllers
             _categoryService = categoryService;
             _paymentService = paymentService;
             _webHostEnvironment = webHostEnvironment;
+            _context = context;
         }
 
         public async Task<IActionResult> Index()
@@ -404,6 +409,64 @@ namespace CoffeeShop.Web.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] = "Lỗi: " + ex.Message;
+            }
+            return RedirectToAction(nameof(Users));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            try
+            {
+                var user = await _userService.GetByIdAsync(id);
+                if (user == null)
+                {
+                    TempData["Error"] = "Không tìm thấy người dùng!";
+                    return RedirectToAction(nameof(Users));
+                }
+
+                // Prevent deleting admin accounts
+                if (user.Role == "Admin")
+                {
+                    TempData["Error"] = "Không thể xóa tài khoản Admin!";
+                    return RedirectToAction(nameof(Users));
+                }
+
+                // Delete user's reviews first (cascade delete may not be enabled)
+                var userReviews = await _context.Reviews.Where(r => r.UserId == id).ToListAsync();
+                if (userReviews.Any())
+                {
+                    _context.Reviews.RemoveRange(userReviews);
+                }
+
+                // Delete user's orders (or mark as anonymous)
+                var userOrders = await _context.Orders.Where(o => o.UserId == id).ToListAsync();
+                if (userOrders.Any())
+                {
+                    // Instead of deleting orders, set UserId to null to preserve order history
+                    foreach (var order in userOrders)
+                    {
+                        order.UserId = null;
+                    }
+                }
+
+                // Delete user's cart
+                var userCart = await _context.Carts.FirstOrDefaultAsync(c => c.UserId == id);
+                if (userCart != null)
+                {
+                    _context.Carts.Remove(userCart);
+                }
+
+                // Finally delete the user
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Đã xóa người dùng thành công!";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Lỗi khi xóa: " + ex.Message;
             }
             return RedirectToAction(nameof(Users));
         }

@@ -1,7 +1,7 @@
-coffee_shop_doc/
 src/coffee_shop_doc/
 **/bin/
 **/obj/
 .agent/
 skills/
 .vs/
+PhanCongCongViec.md

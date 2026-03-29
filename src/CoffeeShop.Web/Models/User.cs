@@ -36,6 +36,13 @@ namespace CoffeeShop.Web.Models
         [StringLength(20)]
         public string Role { get; set; } = "Customer"; // Admin, Staff, Customer
 
+        // Customer type: "Guest" (vãng lai) or "Member" (thân thiết)
+        [StringLength(20)]
+        public string CustomerType { get; set; } = "Member";
+
+        // Loyalty points for members
+        public int LoyaltyPoints { get; set; } = 0;
+
         public bool IsActive { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;

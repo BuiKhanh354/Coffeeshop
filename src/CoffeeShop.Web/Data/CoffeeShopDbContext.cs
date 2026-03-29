@@ -20,6 +20,7 @@ namespace CoffeeShop.Web.Data
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Promotion> Promotions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -120,6 +121,12 @@ namespace CoffeeShop.Web.Data
                     .WithMany(u => u.Reviews)
                     .HasForeignKey(r => r.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // ==================== Promotions ====================
+            modelBuilder.Entity<Promotion>(entity =>
+            {
+                entity.HasIndex(e => e.Code).IsUnique().HasFilter("Code IS NOT NULL");
             });
         }
     }

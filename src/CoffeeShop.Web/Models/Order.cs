@@ -61,9 +61,22 @@ namespace CoffeeShop.Web.Models
 
         public DateTime? UpdatedAt { get; set; }
 
+        // Promotion tracking
+        public int? PromotionId { get; set; }
+        public string? PromotionCode { get; set; }
+
+        // Loyalty points earned from this order
+        public int LoyaltyPointsEarned { get; set; } = 0;
+
+        // Loyalty points used in this order
+        public int LoyaltyPointsUsed { get; set; } = 0;
+
         // Navigation properties
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
+
+        [ForeignKey("PromotionId")]
+        public virtual Promotion? Promotion { get; set; }
 
         public virtual ICollection<OrderDetail>? OrderDetails { get; set; }
         public virtual ICollection<Payment>? Payments { get; set; }
